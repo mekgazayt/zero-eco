@@ -1,19 +1,4 @@
-"""
-ZERO ECO - Environmental Care Platform
-Backend Flask + MySQL (phpMyAdmin / XAMPP)
 
-Fitur:
-  1. Pelaporan sampah        (foto, lokasi, deskripsi)
-  2. Monitoring banjir       (foto, lokasi, tinggi air manual)
-  3. Laporan keadaan darurat
-  4. Peta kondisi lingkungan (titik sampah / banjir / darurat)
-  5. Carbon footprint tracking
-
-Dua dashboard:
-  - User  : /halaman  (karbon) + /laporan + /peta + /profil
-  - Admin : /admin    (ringkasan) + /admin/laporan + /admin/pengguna
-  - Super Admin : /superadmin (akun & hak akses, statistik sistem, pengaturan)
-"""
 import base64
 import hmac
 import io
@@ -71,11 +56,21 @@ ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 
 DB_CONFIG = {
     "host": os.environ.get("DB_HOST", "localhost"),
+    "port": int(os.environ.get("DB_PORT", "4000")),
     "user": os.environ.get("DB_USER", "root"),
     "password": os.environ.get("DB_PASSWORD", ""),
     "database": os.environ.get("DB_NAME", "zeroeco"),
     "charset": "utf8mb4",
 }
+
+DB_SSL_CA = os.environ.get("DB_SSL_CA")
+
+if DB_SSL_CA:
+    DB_CONFIG.update({
+        "ssl_ca": DB_SSL_CA,
+        "ssl_verify_cert": True,
+        "ssl_verify_identity": True,
+    })
 
 ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "admin")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin12345")
