@@ -1,0 +1,629 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f7f8f4">
+
+<title>Login | ZERO ECO</title>
+
+<style>
+:root {
+    --green: #174b38;
+    --green-dark: #103729;
+    --green-light: #e8f0e9;
+    --lime: #c6dc83;
+    --ink: #202923;
+    --muted: #68736b;
+    --paper: #f7f8f4;
+    --white: #ffffff;
+    --line: #e5e9e2;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* NAVBAR */
+
+.navbar {
+    height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 7%;
+    background: rgba(255,255,255,.96);
+    border-bottom: 1px solid var(--line);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--green);
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.logo-icon {
+    width: 37px;
+    height: 37px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--green);
+    color: white;
+    font-size: 20px;
+}
+
+.back-link {
+    color: #536359;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.back-link:hover {
+    color: var(--green);
+}
+
+/* MAIN LOGIN */
+
+.login-section {
+    min-height: calc(100vh - 150px);
+    padding: 65px 7%;
+    display: grid;
+    grid-template-columns: 1fr 0.85fr;
+    align-items: center;
+    gap: 85px;
+}
+
+/* LEFT CONTENT */
+
+.login-info {
+    max-width: 510px;
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+}
+
+.eyebrow::before {
+    content: "";
+    width: 25px;
+    height: 2px;
+    background: #85a86b;
+}
+
+.login-info h1 {
+    font-family: Georgia, serif;
+    font-size: clamp(40px, 5vw, 59px);
+    line-height: 1.17;
+    letter-spacing: -1.5px;
+    color: var(--green-dark);
+    font-weight: 500;
+    margin-bottom: 22px;
+}
+
+.login-info h1 span {
+    color: #7c9c58;
+    font-style: italic;
+}
+
+.login-info p {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.9;
+    max-width: 460px;
+}
+
+.info-divider {
+    width: 65px;
+    height: 2px;
+    background: var(--lime);
+    margin: 30px 0;
+}
+
+.info-note {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #66736a;
+    font-size: 12px;
+}
+
+.info-note span {
+    color: var(--green);
+    font-size: 20px;
+}
+
+/* LOGIN CARD */
+
+.login-card {
+    background: white;
+    border: 1px solid var(--line);
+    padding: 43px;
+    box-shadow: 0 12px 40px rgba(25,60,40,.055);
+}
+
+.card-heading {
+    margin-bottom: 30px;
+}
+
+.card-heading .label {
+    color: #7c9c58;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+    margin-bottom: 10px;
+}
+
+.card-heading h2 {
+    font-family: Georgia, serif;
+    font-size: 34px;
+    font-weight: 500;
+    color: var(--green-dark);
+    margin-bottom: 8px;
+}
+
+.card-heading p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+/* ERROR */
+
+.flash-error {
+    background: #fff0ed;
+    color: #b94235;
+    border: 1px solid #f1d1ca;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    font-size: 12px;
+}
+
+/* INPUT */
+
+.input-group {
+    margin-bottom: 21px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #34443a;
+    margin-bottom: 9px;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-wrapper input {
+    width: 100%;
+    height: 50px;
+    padding: 0 14px;
+    border: 1px solid #dce5de;
+    border-radius: 4px;
+    background: #fff;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    transition: .2s;
+}
+
+.input-wrapper input:focus {
+    border-color: #7c9c58;
+    box-shadow: 0 0 0 3px rgba(124,156,88,.10);
+}
+
+.input-wrapper input::placeholder {
+    color: #a5afa8;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: none;
+    color: var(--green);
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* OPTIONS */
+
+.form-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 4px 0 25px;
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.remember {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+}
+
+.remember input {
+    accent-color: var(--green);
+}
+
+/* BUTTON */
+
+.login-btn {
+    width: 100%;
+    height: 50px;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.login-btn:hover {
+    background: var(--green-dark);
+    transform: translateY(-2px);
+}
+
+/* REGISTER */
+
+.register {
+    margin-top: 27px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.register a {
+    color: var(--green);
+    font-weight: 700;
+}
+
+.register a:hover {
+    text-decoration: underline;
+}
+
+.card-footer {
+    border-top: 1px solid var(--line);
+    margin-top: 27px;
+    padding-top: 20px;
+    text-align: center;
+}
+
+.card-footer a {
+    color: #748078;
+    font-size: 11px;
+}
+
+.card-footer a:hover {
+    color: var(--green);
+}
+
+/* FOOTER */
+
+.footer {
+    padding: 23px 7%;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.footer p {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width: 850px) {
+    .login-section {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        max-width: 650px;
+        margin: auto;
+        padding: 55px 6%;
+    }
+
+    .login-info {
+        max-width: 100%;
+    }
+
+    .login-info h1 {
+        font-size: 43px;
+    }
+
+    .login-card {
+        padding: 35px;
+    }
+}
+
+@media(max-width: 500px) {
+    .navbar {
+        height: 68px;
+        padding: 0 5%;
+    }
+
+    .logo {
+        font-size: 19px;
+    }
+
+    .logo-icon {
+        width: 33px;
+        height: 33px;
+    }
+
+    .back-link {
+        font-size: 11px;
+    }
+
+    .login-section {
+        padding: 40px 5%;
+        gap: 30px;
+    }
+
+    .login-info h1 {
+        font-size: 38px;
+    }
+
+    .login-info p {
+        font-size: 13px;
+    }
+
+    .login-card {
+        padding: 27px 22px;
+    }
+
+    .card-heading h2 {
+        font-size: 29px;
+    }
+
+    .footer {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header class="navbar">
+
+    <a href="/" class="logo">
+        <span class="logo-icon">♻</span>
+        ZERO ECO
+    </a>
+
+    <a href="/" class="back-link">
+        ← Kembali ke Beranda
+    </a>
+
+</header>
+
+
+<!-- LOGIN SECTION -->
+<main class="login-section">
+
+    <!-- LEFT INFORMATION -->
+    <section class="login-info">
+
+        <div class="eyebrow">
+            ENVIRONMENTAL CARE PLATFORM
+        </div>
+
+        <h1>
+            Selamat datang kembali di
+            <span>ZERO ECO.</span>
+        </h1>
+
+        <p>
+            Setiap perubahan besar dimulai dari kepedulian kecil.
+            Masuk ke akun Anda untuk mengakses layanan pengelolaan
+            lingkungan, menyampaikan laporan, dan memantau kondisi
+            lingkungan melalui satu platform terintegrasi.
+        </p>
+
+        <div class="info-divider"></div>
+
+        <div class="info-note">
+            <span>♻</span>
+            Bersama menciptakan lingkungan yang lebih baik.
+        </div>
+
+    </section>
+
+
+    <!-- LOGIN FORM -->
+    <section class="login-card">
+
+        <div class="card-heading">
+
+            <div class="label">
+                ACCOUNT ACCESS
+            </div>
+
+            <h2>Masuk Akun</h2>
+
+            <p>
+                Silakan masukkan informasi akun Anda
+                untuk melanjutkan ke ZERO ECO.
+            </p>
+
+        </div>
+
+
+        {% if error %}
+        <div class="flash-error" role="alert">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% for category, message in messages %}
+        <div class="flash-error" role="alert">{{ message }}</div>
+          {% endfor %}
+        {% endwith %}
+
+
+        <form action="{{ url_for('login') }}" method="post">
+
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="next" value="{{ next or '' }}">
+
+            <div class="input-group">
+
+                <label for="username">
+                    Username
+                </label>
+
+                <div class="input-wrapper">
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Masukkan username"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+
+            </div>
+
+
+            <div class="input-group">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <div class="input-wrapper">
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Masukkan password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="toggle-password"
+                        id="toggleBtn"
+                        onclick="togglePassword()"
+                    >
+                        LIHAT
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-options">
+
+                <label class="remember">
+                    <input type="checkbox" name="remember">
+                    Ingat saya
+                </label>
+
+            </div>
+
+
+            <button type="submit" class="login-btn">
+                MASUK KE AKUN →
+            </button>
+
+        </form>
+
+
+        <div class="register">
+            Belum memiliki akun?
+            <a href="{{ url_for('signup') }}">Daftar sekarang</a>
+        </div>
+
+
+        <div class="card-footer">
+            <a href="{{ url_for('index') }}">← Kembali ke halaman utama ZERO ECO</a>
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- FOOTER -->
+<footer class="footer">
+
+    <p>
+        © 2026 ZERO ECO. All rights reserved.
+    </p>
+
+    <p>
+        Environmental Care Platform
+    </p>
+
+</footer>
+
+
+<script>
+function togglePassword() {
+
+    const password = document.getElementById("password");
+    const button = document.getElementById("toggleBtn");
+
+    if (password.type === "password") {
+        password.type = "text";
+        button.textContent = "SEMBUNYI";
+    } else {
+        password.type = "password";
+        button.textContent = "LIHAT";
+    }
+
+}
+</script>
+
+</body>
+</html>

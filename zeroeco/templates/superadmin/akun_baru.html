@@ -1,0 +1,26 @@
+{% extends "superadmin/base.html" %}
+{% block title %}Tambah Akun Admin{% endblock %}
+{% block wrap_class %}narrow{% endblock %}
+{% block heading %}Tambah akun Admin.{% endblock %}
+{% block subtitle %}Akun baru langsung berperan Admin: bisa memeriksa laporan dan mengelola akun Pengguna.{% endblock %}
+{% block actions %}<a class="btn secondary" href="{{ url_for('superadmin_akun') }}">← Kelola Akun</a>{% endblock %}
+{% block body %}
+{% if error %}<div class="flash error" role="alert">{{ error }}</div>{% endif %}
+<section class="panel">
+ <form method="post" action="{{ url_for('superadmin_akun_baru') }}" autocomplete="off">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="field"><label for="nama">Nama lengkap</label><input id="nama" name="nama" maxlength="100" value="{{ form.nama }}" required></div>
+  <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" maxlength="150" value="{{ form.email }}" required></div>
+  <div class="row-2">
+   <div class="field"><label for="username">Username</label><input id="username" name="username" maxlength="30" value="{{ form.username }}" required>
+    <span class="hint">3–30 karakter: huruf, angka, titik, garis bawah, atau strip.</span></div>
+   <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" minlength="8" required>
+    <span class="hint">Minimal 8 karakter.</span></div>
+  </div>
+  <div class="form-actions">
+   <button class="btn" type="submit">Buat akun Admin</button>
+   <a class="btn secondary" href="{{ url_for('superadmin_akun') }}">Batal</a>
+  </div>
+ </form>
+</section>
+{% endblock %}

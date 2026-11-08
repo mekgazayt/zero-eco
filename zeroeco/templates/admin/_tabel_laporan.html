@@ -1,0 +1,43 @@
+{# Tabel laporan admin (dashboard & Kelola Laporan).
+   Variabel: rows, f_q, f_jenis, f_status, form_action, judul_blok #}
+<section class="card card-block">
+ <h2 class="section-title">{{ judul_blok }}</h2>
+ <form class="filter-bar" method="get" action="{{ form_action }}">
+  <div class="field grow"><label for="fq">Cari</label>
+   <input id="fq" type="search" name="q" value="{{ f_q }}" placeholder="Judul, lokasi, atau pelapor"></div>
+  <div class="field"><label for="fj">Jenis</label>
+   <select id="fj" name="jenis" onchange="this.form.submit()">
+    <option value="">Semua jenis</option>
+    {% for kode, j in JENIS_LAPORAN.items() %}<option value="{{ kode }}" {{ 'selected' if f_jenis == kode }}>{{ j.label }}</option>{% endfor %}
+   </select></div>
+  <div class="field"><label for="fs">Status</label>
+   <select id="fs" name="status" onchange="this.form.submit()">
+    <option value="" {{ 'selected' if not f_status }}>Semua status</option>
+    {% for s in STATUS_LAPORAN %}<option value="{{ s }}" {{ 'selected' if f_status == s }}>{{ s }}</option>{% endfor %}
+   </select></div>
+  <button class="btn" type="submit">Terapkan</button>
+  {% if f_q or f_jenis or f_status %}<a class="btn secondary" href="{{ form_action }}?status=">Tampilkan semua</a>{% endif %}
+ </form>
+
+ <div class="table-wrap">
+  <table>
+   <thead><tr><th>Waktu</th><th>Judul</th><th>Jenis</th><th>Pelapor</th><th>Lokasi</th><th>Status</th><th>Aksi</th></tr></thead>
+   <tbody>
+    {% for l in rows %}
+    <tr>
+     <td>{{ l.dibuat | waktu_singkat }}</td>
+     <td class="wrap-cell">{{ l.judul }}</td>
+     <td><span class="tag jenis {{ l.jenis }}">{{ JENIS_LAPORAN[l.jenis].label if l.jenis in JENIS_LAPORAN else l.jenis }}</span></td>
+     <td>{{ l.username }}</td>
+     <td class="wrap-cell">{{ l.lokasi }}</td>
+     <td><span class="badge s-{{ l.status | status_kelas }}">{{ l.status }}</span></td>
+     <td><a class="btn sm" href="{{ url_for('admin_laporan_detail', laporan_id=l.id) }}">Periksa</a></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7" class="empty-cell">Tidak ada laporan yang cocok.</td></tr>
+    {% endfor %}
+   </tbody>
+  </table>
+ </div>
+ <p class="pager-note">{{ rows | length }} laporan ditampilkan.</p>
+</section>

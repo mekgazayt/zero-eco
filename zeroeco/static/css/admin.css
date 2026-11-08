@@ -1,0 +1,71 @@
+/* =====================================================
+   ZERO ECO — tambahan kecil untuk halaman admin & super admin.
+   Dimuat SETELAH app.css dan memakai variabel (--green, --line, ...) darinya,
+   jadi tampilan otomatis ikut bila tema landing/user berubah.
+   ===================================================== */
+
+/* kartu metrik: 5 kolom + penekanan angka */
+.cards.c5{grid-template-columns:repeat(5,minmax(0,1fr))}
+.metric:nth-child(5){border-top-color:var(--blue)}
+.metric.warn strong{color:var(--orange)}
+.metric.ok strong{color:#216b38}
+.metric.alert{border-top-color:var(--darurat)}
+.cards+.card-block,.cards+.two-col,.cards+.page-grid{margin-top:15px}
+.card-block+.card-block,.card-block+.quick-links{margin-top:15px}
+.two-col,.page-grid{margin-top:15px}
+.two-col>.card-block,.page-grid>.card-block{margin-top:0}
+
+/* filter & tabel */
+.filter-bar .field select{min-width:150px}
+.filter-bar .btn{height:41px}
+td.nm{white-space:normal;min-width:120px}
+td.acts{white-space:nowrap;font-size:12px;color:var(--muted)}
+.table-link.plain{border:0;background:none;padding:0;font:inherit;font-weight:bold;cursor:pointer}
+.table-link.danger{color:#9b625a}
+.sep{color:#b5beb8;margin:0 6px}
+tbody tr:hover td{background:#fbfcfa}
+td.empty-cell{text-align:center;color:var(--muted);padding:30px 10px;white-space:normal}
+
+/* label peran & status akun */
+.tag.r-user{background:#e1f2e4;color:#216b38}
+.tag.r-admin{background:#ece4f7;color:#5f3f94}
+.tag.r-superadmin{background:var(--green);color:var(--lime)}
+.badge.aktif{background:#e1f2e4;color:#216b38}
+.badge.nonaktif{background:#f6e0dc;color:#9b3a2e}
+
+/* matriks hak akses */
+table.matrix td,table.matrix th{white-space:normal}
+table.matrix th:not(:first-child),table.matrix td:not(:first-child){text-align:center}
+table.matrix td.yes{color:var(--green);font-weight:bold}
+table.matrix td.no{color:#aab4ad}
+
+/* pilihan status laporan (gaya sama dengan pilihan jenis laporan di sisi user) */
+.status-pick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.status-pick input{position:absolute;opacity:0;pointer-events:none}
+.status-pick label{display:block;border:1px solid var(--line);border-top:3px solid var(--c);border-radius:8px;padding:13px 12px;cursor:pointer;background:#fff;transition:.15s;font-size:13px;font-weight:bold;color:var(--green-dark);text-align:center}
+.status-pick label:hover{background:#fbfcfa}
+.status-pick input:checked+label{background:var(--green-soft);border-color:var(--c);box-shadow:0 0 0 2px color-mix(in srgb,var(--c) 28%,transparent)}
+.status-pick input:focus-visible+label{outline:2px solid #7c9c58;outline-offset:2px}
+.history{background:var(--green-soft);border-radius:5px;padding:12px;color:var(--muted);font-size:12px;line-height:1.7;margin:0 0 15px}
+.history b{color:var(--green)}
+.panel .section-title,.panel .panel-title{margin-bottom:14px}
+.detail-map{margin-top:16px}
+.detail-photo{margin-bottom:16px}
+
+/* detail laporan: judul + badge */
+h1 .badge{font:bold 11px Arial,sans-serif;vertical-align:middle;margin-left:6px}
+
+/* form sempit */
+.wrap.narrow .panel{padding:26px}
+.form-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
+.target.danger-zone{margin-top:22px}
+
+@media(max-width:1100px){.cards.c5{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:650px){.cards.c5{grid-template-columns:repeat(2,minmax(0,1fr))}.filter-bar .field,.filter-bar .btn{width:100%}}
+.welcome+.two-col,.welcome+.page-grid,.welcome+.card-block,.welcome+.cards{margin-top:0}
+.page-grid>*,.two-col>*,.stack>*{min-width:0}
+.filter-bar .field input,.filter-bar .field select{height:42px;padding-top:0;padding-bottom:0}
+@media(max-width:980px){.page-grid,.two-col{grid-template-columns:minmax(0,1fr)}}
+.field label .small{line-height:1;font-weight:normal}
+.row-2{align-items:start}
+.two-col.top{align-items:start}

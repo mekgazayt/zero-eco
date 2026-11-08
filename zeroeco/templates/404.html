@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block title %}Halaman tidak ditemukan{% endblock %}
+{% block content %}
+<main class="wrap narrow">
+ <div class="panel" style="text-align:center;padding:48px 24px">
+  <div class="eyebrow">404</div>
+  <h1>Halaman tidak ditemukan</h1>
+  <p class="subtitle" style="margin-bottom:22px">Alamat yang kamu buka tidak ada atau sudah dipindahkan.</p>
+  <a class="btn" href="{{ url_for('index') }}">Kembali ke beranda</a>
+ </div>
+</main>
+{% endblock %}

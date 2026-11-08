@@ -1,0 +1,88 @@
+{% extends "admin/base.html" %}
+{% block title %}Laporan #{{ l.id }}{% endblock %}
+{% block head_extra %}<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">{% endblock %}
+{% block heading %}Detail Laporan #{{ l.id }} <span class="badge s-{{ l.status | status_kelas }}">{{ l.status }}</span>{% endblock %}
+{% block subtitle %}Dilaporkan oleh {{ l.username }} · {{ l.dibuat | waktu_lengkap }}{% endblock %}
+{% block actions %}<a class="btn secondary" href="{{ url_for('admin_laporan') }}">← Daftar laporan</a>{% endblock %}
+
+{% block body %}
+{% set j = JENIS_LAPORAN.get(l.jenis) %}
+{# "Menunggu verifikasi" bukan pilihan: pilihan awalnya "Diverifikasi" #}
+{% set pilihan = [('Diverifikasi', 'var(--blue)'), ('Ditangani', 'var(--purple)'), ('Selesai', '#7c9c58'), ('Ditolak', 'var(--danger)')] %}
+{% set terpilih = l.status if l.status in ['Diverifikasi', 'Ditangani', 'Selesai', 'Ditolak'] else 'Diverifikasi' %}
+<div class="page-grid">
+ <section class="panel">
+  <h2 class="panel-title">{{ l.judul }}</h2>
+  {% if l.foto %}
+  <img class="detail-photo" src="{{ l.foto | foto_url }}" alt="Foto laporan"
+       onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'empty',textContent:'Foto tidak ditemukan di server (cek folder static/uploads).'}))">
+  {% endif %}
+  <dl class="kv">
+   <dt>Jenis</dt><dd><span class="tag jenis {{ l.jenis }}">{{ j.label if j else l.jenis }}</span></dd>
+   {% if l.tinggi_air is not none %}<dt>Tinggi air</dt><dd>{{ l.tinggi_air | round(0) | int }} cm</dd>{% endif %}
+   <dt>Lokasi</dt><dd>{{ l.lokasi }}</dd>
+   <dt>Koordinat</dt><dd>{{ l.latitude }}, {{ l.longitude }}</dd>
+   <dt>Pelapor</dt><dd>{{ l.pelapor }} (@{{ l.username }}) · {{ l.email_pelapor }}</dd>
+   <dt>Dilaporkan</dt><dd>{{ l.dibuat | waktu_lengkap }}</dd>
+  </dl>
+  <div class="desc-box">{{ l.deskripsi }}</div>
+  <div id="detailMap" class="detail-map" aria-label="Lokasi laporan di peta"></div>
+ </section>
+
+ <section class="panel">
+  <h2 class="panel-title">Tindak lanjut</h2>
+  <form method="post" action="{{ url_for('admin_laporan_status', laporan_id=l.id) }}">
+   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+   <div class="field" style="margin-bottom:8px"><label id="lblStatus">Ubah status</label></div>
+   <div class="status-pick" role="radiogroup" aria-labelledby="lblStatus">
+    {% for s, warna in pilihan %}
+    <div>
+     <input type="radio" name="status" id="st-{{ loop.index }}" value="{{ s }}" {{ 'checked' if s == terpilih }}>
+     <label for="st-{{ loop.index }}" style="--c:{{ warna }}">{{ s }}</label>
+    </div>
+    {% endfor %}
+   </div>
+
+   <div class="field">
+    <label for="tanggapan">Tanggapan untuk pelapor</label>
+    <textarea id="tanggapan" name="tanggapan" maxlength="1000" placeholder="Contoh: Petugas kebersihan dijadwalkan hari Kamis.">{{ l.tanggapan or '' }}</textarea>
+    <span class="hint">Tanggapan ini tampil di halaman laporan milik pelapor.</span>
+   </div>
+
+   <div class="history">
+    <div><b>Riwayat</b></div>
+    <div>{{ l.dibuat | waktu_lengkap }} · laporan dibuat</div>
+    {% if l.diperbarui %}<div>{{ l.diperbarui | waktu_lengkap }} · status {{ l.status }}</div>{% endif %}
+   </div>
+   <button class="btn full" type="submit">Simpan perubahan</button>
+  </form>
+
+  <div class="target danger-zone">
+   <p class="small" style="margin:0 0 10px">Laporan spam atau duplikat? Menghapus laporan juga menghapus fotonya dan tidak bisa dibatalkan.</p>
+   <form class="inline-form" method="post" action="{{ url_for('admin_laporan_hapus', laporan_id=l.id) }}" onsubmit="return confirm('Hapus laporan ini secara permanen? Foto ikut terhapus.')">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn danger sm" type="submit">Hapus laporan</button>
+   </form>
+  </div>
+ </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function () {
+  const pos = [{{ l.latitude | tojson }}, {{ l.longitude | tojson }}];
+  const warna = {{ (j.warna if j else '#68736b') | tojson }};
+  const ikon = {{ (j.ikon if j else '•') | tojson }};
+  const map = L.map('detailMap', {scrollWheelZoom: false}).setView(pos, 16);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19, attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+  L.marker(pos, {icon: L.divIcon({
+    className: 'pin-icon', iconSize: [30, 30], iconAnchor: [15, 15],
+    html: '<span style="background:' + warna + '">' + ikon + '</span>'
+  })}).addTo(map);
+})();
+</script>
+{% endblock %}

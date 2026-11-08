@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block title %}Profil{% endblock %}
+{% block content %}
+<main class="wrap narrow">
+ {% include '_flash.html' %}
+ <div class="stack">
+
+  <section class="card profile-head">
+   <div class="avatar-lg" aria-hidden="true">{{ user.nama[0] | upper }}</div>
+   <h1>{{ user.nama }}</h1>
+   <p class="subtitle">{{ user.email }}</p>
+  </section>
+
+  <section class="panel">
+   <h2 class="panel-title">Informasi Akun</h2>
+   <div class="info-rows">
+    <div class="row"><span>Nama lengkap</span><span>{{ user.nama }}</span></div>
+    <div class="row"><span>Username</span><span>{{ user.username }}</span></div>
+    <div class="row"><span>Email</span><span>{{ user.email }}</span></div>
+    <div class="row"><span>Peran</span><span>{{ ROLE_LABEL.get(user.role, user.role) }}</span></div>
+    <div class="row"><span>Bergabung sejak</span><span>{{ user.bergabung | tgl }}</span></div>
+    <div class="row"><span>Status</span><span style="color:#216b38;font-weight:bold">Aktif</span></div>
+   </div>
+  </section>
+
+  <section class="panel">
+   <h2 class="panel-title">Ringkasan Kontribusi</h2>
+   <div class="stat-grid">
+    <div class="stat"><div class="val">{{ stats.total_laporan }}</div><div class="lbl">Laporan dikirim</div></div>
+    <div class="stat"><div class="val">{{ stats.total_aktivitas }}</div><div class="lbl">Aktivitas karbon</div></div>
+    <div class="stat"><div class="val">{{ stats.total_karbon }} kg</div><div class="lbl">Total emisi CO₂e</div></div>
+    <div class="stat"><div class="val">{{ stats.hari_aktif }}</div><div class="lbl">Hari aktif mencatat</div></div>
+   </div>
+   <p class="small" style="margin-top:12px">Level emisi saat ini: <b>{{ stats.peringkat }}</b></p>
+  </section>
+
+  <a class="btn" href="{{ beranda_url() }}">Kembali ke dashboard</a>
+ </div>
+</main>
+{% endblock %}

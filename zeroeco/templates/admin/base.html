@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{# Kerangka halaman admin & super admin: memakai layout.html + app.css yang sama dengan landing/user.
+   Blok: eyebrow, heading, subtitle, actions, body, head_extra, scripts #}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% block head_extra %}{% endblock %}
+{% endblock %}
+{% block content %}
+<main class="wrap {% block wrap_class %}{% endblock %}">
+ <section class="welcome">
+  <div>
+   <div class="eyebrow">{% block eyebrow %}PANEL ADMIN{% endblock %}</div>
+   <h1>{% block heading %}{% endblock %}</h1>
+   <p class="subtitle">{% block subtitle %}{% endblock %}</p>
+  </div>
+  <div class="actions">{% block actions %}{% endblock %}</div>
+ </section>
+
+ {% include '_flash.html' %}
+ {% block body %}{% endblock %}
+</main>
+{% endblock %}

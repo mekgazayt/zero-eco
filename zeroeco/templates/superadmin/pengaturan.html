@@ -1,0 +1,38 @@
+{% extends "superadmin/base.html" %}
+{% block title %}Pengaturan{% endblock %}
+{% block heading %}Pengaturan.{% endblock %}
+{% block subtitle %}Ubah nama tampilan, ganti password, dan lihat info sistem.{% endblock %}
+{% block body %}
+<div class="two-col">
+ <div class="stack">
+  <section class="panel">
+   <h2 class="panel-title">Profil</h2>
+   <form method="post" action="{{ url_for('superadmin_pengaturan') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="aksi" value="profil">
+    <div class="field"><label for="nama">Nama</label><input id="nama" name="nama" maxlength="100" value="{{ current_user.nama }}" required></div>
+    <div class="field"><label for="uname">Username</label><input id="uname" value="{{ current_user.username }}" disabled></div>
+    <button class="btn" type="submit">Simpan nama</button>
+   </form>
+  </section>
+  <section class="panel">
+   <h2 class="panel-title">Info sistem</h2>
+   <dl class="kv">
+    {% for k, v in info.items() %}<dt>{{ k }}</dt><dd>{{ v }}</dd>{% endfor %}
+   </dl>
+  </section>
+ </div>
+
+ <section class="panel">
+  <h2 class="panel-title">Ganti password</h2>
+  <form method="post" action="{{ url_for('superadmin_pengaturan') }}" autocomplete="off">
+   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+   <input type="hidden" name="aksi" value="password">
+   <div class="field"><label for="lama">Password lama</label><input id="lama" name="lama" type="password" required></div>
+   <div class="field"><label for="baru">Password baru</label><input id="baru" name="baru" type="password" minlength="8" required><span class="hint">Minimal 8 karakter.</span></div>
+   <div class="field"><label for="ulang">Ulangi password baru</label><input id="ulang" name="ulang" type="password" minlength="8" required></div>
+   <button class="btn" type="submit">Ganti password</button>
+  </form>
+ </section>
+</div>
+{% endblock %}

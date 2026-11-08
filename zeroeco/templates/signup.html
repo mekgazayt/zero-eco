@@ -1,0 +1,432 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ZERO ECO - Daftar</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --green: #174b38;
+  --green-dark: #103729;
+  --green-light: #e8f0e9;
+  --lime: #c6dc83;
+  --ink: #202923;
+  --muted: #68736b;
+  --paper: #f7f8f4;
+  --white: #ffffff;
+  --line: #e5e9e2;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* NAVBAR */
+.navbar {
+  width: 100%;
+  height: 76px;
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8%;
+  border-bottom: 1px solid var(--line);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--green);
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--green);
+  color: var(--lime);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: var(--green);
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.nav-link:hover {
+  color: #75934c;
+}
+
+/* MAIN */
+.main {
+  min-height: calc(100vh - 76px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 45px 20px;
+}
+
+.signup-container {
+  width: 100%;
+  max-width: 950px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--white);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(23, 75, 56, 0.09);
+}
+
+/* LEFT SIDE */
+.signup-info {
+  background: var(--green);
+  color: var(--white);
+  padding: 55px 42px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.signup-info .tagline {
+  color: var(--lime);
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+.signup-info h1 {
+  font-family: Georgia, serif;
+  font-size: 38px;
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+
+.signup-info p {
+  color: #e1eae3;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.info-line {
+  width: 55px;
+  height: 4px;
+  background: var(--lime);
+  margin: 25px 0;
+  border-radius: 5px;
+}
+
+.signup-info .quote {
+  font-family: Georgia, serif;
+  font-style: italic;
+  color: var(--lime);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* RIGHT SIDE */
+.signup-form {
+  padding: 48px 42px;
+}
+
+.signup-form h2 {
+  font-family: Georgia, serif;
+  color: var(--green);
+  font-size: 30px;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 27px;
+  line-height: 1.6;
+}
+
+.flash-error,
+.flash-success {
+  padding: 11px 13px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+
+.flash-error {
+  background: #fce8e6;
+  color: #a52a2a;
+}
+
+.flash-success {
+  background: #e6f4e9;
+  color: #216b38;
+}
+
+.input-group {
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfa;
+  font-size: 14px;
+  outline: none;
+  transition: .2s;
+}
+
+.input-group input:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(23, 75, 56, .08);
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 7px;
+  background: var(--green);
+  color: var(--white);
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: .2s;
+  margin-top: 5px;
+}
+
+.btn-submit:hover {
+  background: var(--green-dark);
+  transform: translateY(-2px);
+}
+
+.login-text {
+  text-align: center;
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 22px;
+}
+
+.login-text a {
+  color: var(--green);
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.login-text a:hover {
+  text-decoration: underline;
+}
+
+.back-home {
+  display: block;
+  text-align: center;
+  margin-top: 15px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.back-home:hover {
+  color: var(--green);
+}
+
+/* RESPONSIVE */
+@media (max-width: 700px) {
+  .navbar {
+    padding: 0 20px;
+  }
+
+  .signup-container {
+    grid-template-columns: 1fr;
+    max-width: 450px;
+  }
+
+  .signup-info {
+    padding: 35px 28px;
+  }
+
+  .signup-info h1 {
+    font-size: 30px;
+  }
+
+  .signup-form {
+    padding: 35px 28px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="logo">
+    <div class="logo-icon">♻</div>
+    ZERO ECO
+  </div>
+
+  <a href="/" class="nav-link">← Kembali ke Beranda</a>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+
+  <div class="signup-container">
+
+    <!-- INFORMASI -->
+    <section class="signup-info">
+      <div class="tagline">JOIN OUR COMMUNITY</div>
+
+      <h1>Mulai Langkah Kecil untuk Bumi yang Lebih Baik.</h1>
+
+      <div class="info-line"></div>
+
+      <p>
+        Bergabunglah bersama ZERO ECO dan jadilah bagian dari
+        komunitas yang peduli terhadap lingkungan.
+        Bersama kita dapat menciptakan lingkungan yang lebih
+        bersih, sehat, dan berkelanjutan.
+      </p>
+
+      <br>
+
+      <div class="quote">
+        "Perubahan besar dimulai dari kepedulian kecil."
+      </div>
+    </section>
+
+    <!-- FORM PENDAFTARAN -->
+    <section class="signup-form">
+
+      <h2>Buat Akun</h2>
+
+      <p class="subtitle">
+        Lengkapi informasi berikut untuk mulai menggunakan ZERO ECO.
+      </p>
+
+      {% if error %}
+      <div class="flash-error">{{ error }}</div>
+      {% endif %}
+
+      {% if success %}
+      <div class="flash-success" role="status">{{ success }} <a href="{{ url_for('login') }}" style="font-weight:bold;color:inherit;text-decoration:underline">Masuk sekarang</a></div>
+      {% endif %}
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+      <div class="flash-error" role="alert">{{ message }}</div>
+        {% endfor %}
+      {% endwith %}
+
+      <form action="{{ url_for('signup') }}" method="post">
+
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="input-group">
+          <label for="nama">Nama Lengkap</label>
+          <input
+            type="text"
+            id="nama"
+            name="nama"
+            placeholder="Masukkan nama lengkap"
+            autocomplete="name"
+            maxlength="100"
+            value="{{ form.get('nama', '') }}"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="email">Alamat Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="contoh@email.com"
+            autocomplete="email"
+            maxlength="150"
+            value="{{ form.get('email', '') }}"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Buat username"
+            autocomplete="username"
+            pattern="[A-Za-z0-9_.\-]{3,30}"
+            title="3–30 karakter: huruf, angka, titik, garis bawah, atau strip"
+            value="{{ form.get('username', '') }}"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Minimal 8 karakter"
+            autocomplete="new-password"
+            minlength="8"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn-submit">
+          DAFTAR SEKARANG →
+        </button>
+
+      </form>
+
+      <p class="login-text">
+        Sudah memiliki akun?
+        <a href="{{ url_for('login') }}">Masuk di sini</a>
+      </p>
+
+      <a href="/" class="back-home">
+        Kembali ke halaman utama
+      </a>
+
+    </section>
+
+  </div>
+
+</main>
+
+</body>
+</html>

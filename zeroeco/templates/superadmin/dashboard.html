@@ -1,0 +1,57 @@
+{% extends "superadmin/base.html" %}
+{% block title %}Dashboard Super Admin{% endblock %}
+{% block heading %}Selamat datang, {{ current_user.nama }}.{% endblock %}
+{% block subtitle %}Kelola akun dan hak akses, serta pantau seluruh aktivitas sistem ZERO ECO.{% endblock %}
+{% block actions %}
+<a class="btn" href="{{ url_for('superadmin_akun_baru') }}">＋ Tambah akun Admin</a>
+<a class="btn secondary" href="{{ url_for('superadmin_statistik') }}">Statistik Sistem</a>
+{% endblock %}
+
+{% block body %}
+<section class="cards c5" aria-label="Ringkasan sistem">
+ <div class="card metric"><h3>Total akun</h3><strong>{{ total_akun }}</strong><p>semua peran</p></div>
+ <div class="card metric"><h3>Admin</h3><strong>{{ per_role['admin'] }}</strong><p>pengelola laporan</p></div>
+ <div class="card metric"><h3>Pengguna</h3><strong>{{ per_role['user'] }}</strong><p>warga terdaftar</p></div>
+ <div class="card metric {{ 'warn' if nonaktif }}"><h3>Akun nonaktif</h3><strong>{{ nonaktif }}</strong><p>tidak bisa masuk</p></div>
+ <div class="card metric"><h3>Total laporan</h3><strong>{{ total_laporan }}</strong><p>semua status</p></div>
+</section>
+
+<div class="two-col">
+ <section class="card card-block">
+  <h2 class="section-title">Akun terbaru</h2>
+  <div class="table-wrap">
+   <table>
+    <thead><tr><th>Nama</th><th>Peran</th><th>Bergabung</th><th>Status</th></tr></thead>
+    <tbody>
+     {% for u in terbaru %}
+     <tr>
+      <td class="nm">{{ u.nama }} <span class="small">@{{ u.username }}</span></td>
+      <td><span class="tag r-{{ u.role }}">{{ ROLE_LABEL.get(u.role, u.role) }}</span></td>
+      <td>{{ u.bergabung | tanggal_singkat }}</td>
+      <td><span class="badge {{ 'aktif' if u.aktif else 'nonaktif' }}">{{ 'Aktif' if u.aktif else 'Nonaktif' }}</span></td>
+     </tr>
+     {% else %}<tr><td colspan="4" class="empty-cell">Belum ada akun.</td></tr>{% endfor %}
+    </tbody>
+   </table>
+  </div>
+ </section>
+
+ <section class="card card-block">
+  <h2 class="section-title">Status laporan</h2>
+  {% set maks = (per_status.values() | max) or 1 %}
+  <div class="bars">
+   {% for s, n in per_status.items() %}
+   <div class="bar-row">
+    <div class="bar-label"><span>{{ s }}</span><b>{{ n }}</b></div>
+    <div class="bar-track"><span style="width:{{ (n / maks * 100) | round(1) }}%"></span></div>
+   </div>
+   {% endfor %}
+  </div>
+ </section>
+</div>
+
+<div class="quick-links">
+ <a class="quick-card" href="{{ url_for('superadmin_akun') }}"><div><b>Kelola Akun</b><span>Tambah Admin, ubah peran, nonaktifkan akun</span></div><span class="arrow">→</span></a>
+ <a class="quick-card" href="{{ url_for('superadmin_hak_akses') }}"><div><b>Hak Akses</b><span>Lihat apa yang boleh dilakukan tiap peran</span></div><span class="arrow">→</span></a>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "superadmin/base.html" %}
+{% block title %}Hak Akses{% endblock %}
+{% block heading %}Hak akses tiap peran.{% endblock %}
+{% block subtitle %}Pembagian wewenang Pengguna, Admin, dan Super Admin. Peran akun diubah di menu Kelola Akun.{% endblock %}
+{% block actions %}<a class="btn" href="{{ url_for('superadmin_akun') }}">Kelola Akun</a>{% endblock %}
+{% block body %}
+<div class="two-col top">
+ <section class="card card-block">
+  <h2 class="section-title">Matriks hak akses</h2>
+  {% include 'superadmin/_matriks.html' %}
+ </section>
+
+ <div class="stack">
+  <section class="card card-block" style="margin-top:0">
+   <h2 class="section-title">Penjelasan peran</h2>
+   <div class="stack">
+    <div class="info-item"><h3><span class="tag r-user">Pengguna</span></h3><p>Warga: mencatat jejak karbon, membuat laporan lingkungan, dan melihat peta.</p></div>
+    <div class="info-item"><h3><span class="tag r-admin">Admin</span></h3><p>Memeriksa laporan, mengubah status dan menanggapi pelapor, serta mengelola akun Pengguna.</p></div>
+    <div class="info-item"><h3><span class="tag r-superadmin">Super Admin</span></h3><p>Semua hak Admin, ditambah mengelola akun Admin, melihat statistik sistem, dan pengaturan.</p></div>
+   </div>
+  </section>
+
+  <section class="card card-block" style="margin-top:0">
+   <h2 class="section-title">Pemegang hak pengelola</h2>
+   <div class="table-wrap">
+    <table>
+     <thead><tr><th>Nama</th><th>Username</th><th>Peran</th><th>Status</th></tr></thead>
+     <tbody>
+      {% for u in pengelola %}
+      <tr><td class="nm">{{ u.nama }}</td><td>{{ u.username }}</td>
+       <td><span class="tag r-{{ u.role }}">{{ ROLE_LABEL.get(u.role, u.role) }}</span></td>
+       <td><span class="badge {{ 'aktif' if u.aktif else 'nonaktif' }}">{{ 'Aktif' if u.aktif else 'Nonaktif' }}</span></td></tr>
+      {% endfor %}
+     </tbody>
+    </table>
+   </div>
+  </section>
+ </div>
+</div>
+{% endblock %}

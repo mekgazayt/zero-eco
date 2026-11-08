@@ -1,0 +1,71 @@
+{% extends "superadmin/base.html" %}
+{% block title %}Statistik Sistem{% endblock %}
+{% block heading %}Statistik sistem.{% endblock %}
+{% block subtitle %}Pertumbuhan akun dan laporan, penanganan laporan, serta emisi karbon yang tercatat.{% endblock %}
+{% block body %}
+<div class="two-col">
+ <section class="card card-block">
+  <h2 class="section-title">Akun baru per bulan</h2>
+  {% set maks = (seri | map(attribute='akun') | max) or 1 %}
+  <div class="bars">
+   {% for b in seri %}
+   <div class="bar-row"><div class="bar-label"><span>{{ b.label }}</span><b>{{ b.akun }}</b></div>
+    <div class="bar-track"><span style="width:{{ (b.akun / maks * 100) | round(1) }}%"></span></div></div>
+   {% endfor %}
+  </div>
+ </section>
+ <section class="card card-block">
+  <h2 class="section-title">Laporan masuk per bulan</h2>
+  {% set maks = (seri | map(attribute='laporan') | max) or 1 %}
+  <div class="bars">
+   {% for b in seri %}
+   <div class="bar-row"><div class="bar-label"><span>{{ b.label }}</span><b>{{ b.laporan }}</b></div>
+    <div class="bar-track"><span style="width:{{ (b.laporan / maks * 100) | round(1) }}%"></span></div></div>
+   {% endfor %}
+  </div>
+ </section>
+ <section class="card card-block">
+  <h2 class="section-title">Laporan per jenis</h2>
+  {% set maks = (per_jenis.values() | max) or 1 %}
+  <div class="bars">
+   {% for kode, j in JENIS_LAPORAN.items() %}
+   <div class="bar-row"><div class="bar-label"><span>{{ j.label }}</span><b>{{ per_jenis[kode] }}</b></div>
+    <div class="bar-track"><span style="--c:{{ j.warna }};width:{{ (per_jenis[kode] / maks * 100) | round(1) }}%"></span></div></div>
+   {% endfor %}
+  </div>
+ </section>
+ <section class="card card-block">
+  <h2 class="section-title">Status penanganan</h2>
+  {% set maks = (per_status.values() | max) or 1 %}
+  <div class="bars">
+   {% for s, n in per_status.items() %}
+   <div class="bar-row"><div class="bar-label"><span>{{ s }}</span><b>{{ n }}</b></div>
+    <div class="bar-track"><span style="width:{{ (n / maks * 100) | round(1) }}%"></span></div></div>
+   {% endfor %}
+  </div>
+ </section>
+ <section class="card card-block">
+  <h2 class="section-title">Emisi karbon per kategori</h2>
+  <p class="small" style="margin:-8px 0 14px">Total tercatat: <b>{{ total_emisi | emisi_fmt }}</b></p>
+  {% set maks = (emisi_kat.values() | max) or 1 %}
+  <div class="bars">
+   {% for k, v in emisi_kat.items() %}
+   <div class="bar-row"><div class="bar-label"><span>{{ k }}</span><b>{{ v }} kg</b></div>
+    <div class="bar-track"><span style="--c:{{ kategori_info[k].warna }};width:{{ (v / maks * 100) | round(1) }}%"></span></div></div>
+   {% endfor %}
+  </div>
+ </section>
+ <section class="card card-block">
+  <h2 class="section-title">Penyumbang emisi tertinggi</h2>
+  <div class="table-wrap">
+   <table>
+    <thead><tr><th>Pengguna</th><th>Total CO₂e</th></tr></thead>
+    <tbody>
+     {% for p in penyumbang %}<tr><td class="nm">{{ p.nama }} <span class="small">@{{ p.username }}</span></td><td>{{ p.total | emisi_fmt }}</td></tr>
+     {% else %}<tr><td colspan="2" class="empty-cell">Belum ada aktivitas karbon.</td></tr>{% endfor %}
+    </tbody>
+   </table>
+  </div>
+ </section>
+</div>
+{% endblock %}

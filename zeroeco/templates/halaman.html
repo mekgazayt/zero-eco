@@ -1,0 +1,194 @@
+{% extends "layout.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<main class="wrap">
+ <section class="welcome">
+  <div>
+   <div class="eyebrow">ENVIRONMENTAL CARE PLATFORM</div>
+   <h1>Selamat datang, {{ user.nama }}.</h1>
+   <p class="subtitle">Pantau jejak karbonmu dan ikut menjaga lingkungan melalui laporan kondisi di sekitarmu.</p>
+  </div>
+  <div class="actions">
+   <a class="btn" href="{{ url_for('laporan') }}">＋ Buat Laporan</a>
+   <a class="btn secondary" href="{{ url_for('peta') }}">Lihat Peta</a>
+  </div>
+ </section>
+
+ {% include '_flash.html' %}
+
+ <div class="layout">
+  <aside class="panel">
+   <div class="title-row">
+    <h2 class="panel-title">Tambah Aktivitas Karbon</h2>
+    <button class="info-button" type="button" onclick="bukaModal()" title="Panduan kategori emisi">?</button>
+   </div>
+   <form action="{{ url_for('tambah') }}" method="post" id="formTambah">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="field">
+     <label for="selectKategori">Kategori Emisi</label>
+     <select name="jenis" id="selectKategori" onchange="updatePreview()">
+      <option value="Transportasi">🚗 Transportasi</option>
+      <option value="Listrik">⚡ Listrik</option>
+      <option value="Makanan">🍽 Makanan</option>
+      <option value="Sampah">♻ Sampah</option>
+     </select>
+    </div>
+    <div class="field">
+     <label id="labelJumlah" for="inputJumlah">Jarak Tempuh (km)</label>
+     <input type="number" name="jumlah" id="inputJumlah" min="0.01" step="any" placeholder="Masukkan jumlah" required oninput="updatePreview()">
+    </div>
+    <div class="preview" id="kalkulasiPreview">Masukkan jumlah untuk melihat estimasi emisi.</div>
+    <button class="btn full" type="submit">Simpan Aktivitas</button>
+   </form>
+
+   <div class="target">
+    <h3>🎯 Target Emisi Bulan Ini</h3>
+    <div class="target-row">
+     <input class="target-input" type="number" id="targetInput" min="1" step="any" placeholder="Target kg CO₂e">
+     <button type="button" onclick="simpanTarget()">Simpan</button>
+    </div>
+    <div class="target-progress" id="targetProgressWrap">
+     <div class="progress-label"><span>Emisi tercatat</span><span id="targetLabelVal">—</span></div>
+     <div class="progress"><span id="targetBarFill"></span></div>
+     <div class="small" id="targetStatus"></div>
+     <button class="text-button" type="button" onclick="hapusTarget()">Hapus target</button>
+    </div>
+    <p class="small">Target disimpan di browser perangkat ini.</p>
+   </div>
+   <a href="{{ url_for('logout') }}" class="logout">Keluar dari akun ↩</a>
+  </aside>
+
+  <section class="main">
+   <div class="cards">
+    <div class="card metric"><h3>🚗 Transportasi</h3><strong>{{ karbon_transportasi }} kg</strong><p>CO₂e tercatat</p></div>
+    <div class="card metric"><h3>⚡ Listrik</h3><strong>{{ karbon_listrik }} kg</strong><p>CO₂e tercatat</p></div>
+    <div class="card metric"><h3>🍽 Makanan</h3><strong>{{ karbon_makanan }} kg</strong><p>CO₂e tercatat</p></div>
+    <div class="card metric"><h3>♻ Sampah</h3><strong>{{ karbon_sampah }} kg</strong><p>CO₂e tercatat</p></div>
+   </div>
+
+   <div class="card card-block">
+    <h2 class="section-title">Statistik Emisi CO₂e per Kategori</h2>
+    {% if chart_data %}
+     <img class="chart-image" src="{{ chart_data }}" alt="Grafik emisi karbon per kategori">
+    {% else %}
+     <div class="empty">Belum ada data untuk ditampilkan. Tambahkan aktivitas pertamamu melalui formulir.</div>
+    {% endif %}
+   </div>
+
+   <div class="card card-block">
+    <h2 class="section-title">Riwayat Aktivitas</h2>
+    <div class="table-wrap">
+     <table>
+      <thead><tr><th>Kategori</th><th>Jumlah</th><th>Emisi CO₂e</th><th>Tanggal</th></tr></thead>
+      <tbody>
+       {% for b in riwayat %}
+       <tr><td><span class="tag">{{ b.jenis }}</span></td><td>{{ b.jumlah }}</td><td>{{ b.karbon }} kg</td><td>{{ b.tanggal }}</td></tr>
+       {% else %}
+       <tr><td colspan="4" class="small" style="text-align:center">Belum ada aktivitas yang tercatat.</td></tr>
+       {% endfor %}
+      </tbody>
+     </table>
+    </div>
+   </div>
+
+   <div class="analysis">
+    <strong>Total emisi tercatat: {{ total_karbon }} kg CO₂e.</strong><br>
+    {{ saran }}<br>
+    <span class="small">Estimasi pohon untuk menyerap emisi tahunan (asumsi 21 kg CO₂/pohon/tahun): {{ pohon_offset }} pohon.</span>
+   </div>
+
+   <div class="quick-links">
+    <a class="quick-card" href="{{ url_for('laporan') }}"><div><b>Laporkan kondisi lingkungan</b><span>Sampah, banjir, atau keadaan darurat.{% if jumlah_laporan %} Kamu sudah mengirim {{ jumlah_laporan }} laporan.{% endif %}</span></div><span class="arrow">→</span></a>
+    <a class="quick-card" href="{{ url_for('peta') }}"><div><b>Jelajahi peta laporan</b><span>Lihat titik laporan lingkungan.</span></div><span class="arrow">→</span></a>
+   </div>
+  </section>
+ </div>
+</main>
+
+<div class="modal-overlay" id="modalOverlay" onclick="tutupModalOverlay(event)">
+ <div class="modal">
+  <div class="modal-head"><h2>Panduan Kategori Emisi</h2><button class="close" type="button" onclick="tutupModal()" aria-label="Tutup">&times;</button></div>
+  <div class="modal-body">
+   <div class="info-item"><h3>🚗 Transportasi — 0,21 kg CO₂e/km</h3><p>Catat jarak perjalanan kendaraan bermotor. Contoh: perjalanan 10 km menghasilkan estimasi 10 × 0,21 = 2,1 kg CO₂e.</p></div>
+   <div class="info-item"><h3>⚡ Listrik — 0,87 kg CO₂e/kWh</h3><p>Masukkan konsumsi listrik dalam kWh berdasarkan meteran atau tagihan listrik.</p></div>
+   <div class="info-item"><h3>🍽 Makanan — 2,50 kg CO₂e/porsi</h3><p>Catat jumlah porsi makanan hewani sesuai pendekatan perhitungan yang digunakan aplikasi.</p></div>
+   <div class="info-item"><h3>♻ Sampah — 0,50 kg CO₂e/kg</h3><p>Masukkan berat sampah organik dalam kilogram.</p></div>
+   <p class="small">Faktor konversi mengikuti nilai yang digunakan pada backend ZERO ECO. Hasil merupakan estimasi, bukan pengukuran emisi langsung.</p>
+  </div>
+ </div>
+</div>
+
+<button class="fab" type="button" onclick="toggleTips()" title="Tips ramah lingkungan">i</button>
+<div class="tips-panel" id="tipsPanel">
+ <div class="tips-head"><b>🌿 Tips Hijau</b><button class="close" type="button" onclick="toggleTips()">&times;</button></div>
+ <div class="tips-body">
+  <div class="tip-text" id="tipText">Memuat tips...</div>
+  <div class="tip-cat" id="tipCat"></div>
+  <button class="btn secondary" type="button" onclick="acakTip()">Tips lainnya ↻</button>
+ </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const KATEGORI_DATA = {
+ Transportasi:{faktor:0.21,satuan:'km',label:'Jarak Tempuh (km)'},
+ Listrik:{faktor:0.87,satuan:'kWh',label:'Konsumsi Listrik (kWh)'},
+ Makanan:{faktor:2.50,satuan:'porsi',label:'Jumlah Porsi Makanan Hewani'},
+ Sampah:{faktor:0.50,satuan:'kg',label:'Berat Sampah Organik (kg)'}
+};
+const TOTAL = Number({{ total_karbon|tojson }});
+const TARGET_KEY = 'zeroeco_target_' + {{ user.username|tojson }};
+function updatePreview(){
+ const kategori=document.getElementById('selectKategori').value;
+ const jumlah=parseFloat(document.getElementById('inputJumlah').value);
+ const data=KATEGORI_DATA[kategori];
+ document.getElementById('labelJumlah').textContent=data.label;
+ document.getElementById('kalkulasiPreview').innerHTML=(jumlah>0)
+  ? `${jumlah} ${data.satuan} × ${data.faktor} = <b>${(jumlah*data.faktor).toFixed(4)} kg CO₂e</b>`
+  : 'Masukkan jumlah untuk melihat estimasi emisi.';
+}
+function bukaModal(){document.getElementById('modalOverlay').classList.add('open');document.body.style.overflow='hidden'}
+function tutupModal(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow=''}
+function tutupModalOverlay(e){if(e.target.id==='modalOverlay')tutupModal()}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){tutupModal();document.getElementById('tipsPanel').classList.remove('open')}});
+function renderTarget(target){
+ const wrap=document.getElementById('targetProgressWrap');
+ if(!target||target<=0){wrap.style.display='none';return}
+ wrap.style.display='block';
+ const pct=Math.min((TOTAL/target)*100,100);
+ const sisa=Math.max(target-TOTAL,0);
+ document.getElementById('targetLabelVal').textContent=`${TOTAL.toFixed(2)} / ${target} kg`;
+ document.getElementById('targetBarFill').style.width=pct+'%';
+ document.getElementById('targetStatus').textContent=pct>=100
+  ? `Target terlampaui sebesar ${(TOTAL-target).toFixed(2)} kg CO₂e.`
+  : `Tersisa ${sisa.toFixed(2)} kg CO₂e dari target.`;
+}
+function simpanTarget(){
+ const val=parseFloat(document.getElementById('targetInput').value);
+ if(!Number.isFinite(val)||val<=0){alert('Masukkan target lebih dari 0.');return}
+ localStorage.setItem(TARGET_KEY,String(val));
+ document.getElementById('targetInput').value='';
+ renderTarget(val);
+}
+function hapusTarget(){localStorage.removeItem(TARGET_KEY);renderTarget(null)}
+const savedTarget=Number(localStorage.getItem(TARGET_KEY));
+if(savedTarget>0)renderTarget(savedTarget);
+document.getElementById('selectKategori').addEventListener('change',updatePreview);
+updatePreview();
+
+const TIPS=[
+ ['Transportasi','Gunakan transportasi umum, berjalan kaki, atau bersepeda untuk perjalanan yang memungkinkan.'],
+ ['Listrik','Matikan lampu dan perangkat elektronik ketika tidak digunakan.'],
+ ['Makanan','Rencanakan porsi makan agar makanan tidak terbuang.'],
+ ['Sampah','Pisahkan sampah organik dan anorganik agar lebih mudah dikelola.'],
+ ['Alam','Rawat tanaman di rumah atau lingkungan sekitar.'],
+ ['Gaya hidup','Gunakan kembali barang yang masih layak sebelum membeli yang baru.']
+];
+let tipIndex=Math.floor(Math.random()*TIPS.length);
+function tampilTip(){document.getElementById('tipText').textContent=TIPS[tipIndex][1];document.getElementById('tipCat').textContent='Kategori: '+TIPS[tipIndex][0]}
+function acakTip(){let next;do{next=Math.floor(Math.random()*TIPS.length)}while(next===tipIndex&&TIPS.length>1);tipIndex=next;tampilTip()}
+function toggleTips(){document.getElementById('tipsPanel').classList.toggle('open')}
+tampilTip();
+</script>
+{% endblock %}

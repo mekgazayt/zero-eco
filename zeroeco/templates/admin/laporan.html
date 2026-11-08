@@ -1,0 +1,10 @@
+{% extends "admin/base.html" %}
+{% block title %}Kelola Laporan{% endblock %}
+{% block heading %}Kelola laporan warga.{% endblock %}
+{% block subtitle %}Semua laporan sampah, banjir, dan darurat yang masuk. Pilih Periksa untuk mengubah status dan memberi tanggapan.{% endblock %}
+{% block actions %}<a class="btn secondary" href="{{ url_for('peta') }}">Lihat Peta</a>{% endblock %}
+{% block body %}
+{% set form_action = url_for('admin_laporan') %}
+{% set judul_blok = 'Semua laporan' %}
+{% include 'admin/_tabel_laporan.html' %}
+{% endblock %}

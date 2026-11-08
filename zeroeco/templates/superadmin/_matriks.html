@@ -1,0 +1,14 @@
+{# Matriks hak akses. Data: MATRIKS_HAK (app.py) #}
+<div class="table-wrap">
+<table class="matrix">
+ <thead><tr><th>Fitur</th><th>Pengguna</th><th>Admin</th><th>Super Admin</th></tr></thead>
+ <tbody>
+  {% for fitur, u, a, s in MATRIKS_HAK %}
+  <tr>
+   <td>{{ fitur }}</td>
+   {% for v in (u, a, s) %}<td class="{{ 'no' if v == '–' else 'yes' }}">{{ v }}</td>{% endfor %}
+  </tr>
+  {% endfor %}
+ </tbody>
+</table>
+</div>

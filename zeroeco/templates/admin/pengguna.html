@@ -1,0 +1,42 @@
+{% extends "admin/base.html" %}
+{% block title %}Kelola Pengguna{% endblock %}
+{% block heading %}Kelola pengguna.{% endblock %}
+{% block subtitle %}Akun warga yang terdaftar. Akun yang dinonaktifkan tidak bisa masuk sampai diaktifkan kembali. Akun Admin dikelola oleh Super Admin.{% endblock %}
+{% block body %}
+<section class="card card-block">
+ <h2 class="section-title">Akun pengguna <span class="small">· {{ rows | length }} akun</span></h2>
+ <div class="table-wrap">
+  <table>
+   <thead><tr><th>Nama</th><th>Username</th><th>Email</th><th>Bergabung</th><th>Laporan</th><th>Emisi</th><th>Status</th><th>Aksi</th></tr></thead>
+   <tbody>
+    {% for u in rows %}
+    <tr>
+     <td class="nm">{{ u.nama }}</td>
+     <td>@{{ u.username }}</td>
+     <td>{{ u.email }}</td>
+     <td>{{ u.bergabung | tgl }}</td>
+     <td>{{ u.jumlah_laporan }}</td>
+     <td>{{ u.total_emisi | emisi_fmt }}</td>
+     <td><span class="badge {{ 'aktif' if u.aktif else 'nonaktif' }}">{{ 'Aktif' if u.aktif else 'Nonaktif' }}</span></td>
+     <td class="acts">
+      <form class="inline-form" method="post" action="{{ url_for('admin_pengguna_status', user_id=u.id) }}"
+            {% if u.aktif %}data-k="Nonaktifkan akun {{ u.username }}? Akun ini tidak bisa login sampai diaktifkan lagi." onsubmit="return confirm(this.dataset.k)"{% endif %}>
+       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+       <button class="table-link plain" type="submit">{{ 'Nonaktifkan' if u.aktif else 'Aktifkan' }}</button>
+      </form>
+      <span class="sep">·</span>
+      <form class="inline-form" method="post" action="{{ url_for('admin_pengguna_hapus', user_id=u.id) }}"
+            data-k="Hapus akun {{ u.username }} beserta semua laporan dan riwayat karbonnya?" onsubmit="return confirm(this.dataset.k)">
+       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+       <button class="table-link plain danger" type="submit">Hapus</button>
+      </form>
+     </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="8" class="empty-cell">Belum ada akun pengguna.</td></tr>
+    {% endfor %}
+   </tbody>
+  </table>
+ </div>
+</section>
+{% endblock %}

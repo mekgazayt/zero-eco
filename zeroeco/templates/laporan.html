@@ -1,0 +1,216 @@
+{% extends "layout.html" %}
+{% block title %}Laporan Lingkungan{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+{% endblock %}
+
+{% block content %}
+{% set pilih = form.get('jenis') or request.args.get('jenis') or 'sampah' %}
+<main class="wrap">
+ <section class="welcome">
+  <div>
+   <div class="eyebrow">LAPORAN LINGKUNGAN</div>
+   <h1>Laporkan kondisi di sekitarmu.</h1>
+   <p class="subtitle">Laporanmu akan diperiksa admin, lalu muncul di peta setelah diproses.</p>
+  </div>
+  <div class="actions"><a class="btn secondary" href="{{ url_for('peta') }}">Lihat peta laporan</a></div>
+ </section>
+
+ {% include '_flash.html' %}
+
+ <div class="page-grid">
+  <section class="panel">
+   <h2 class="panel-title">Buat laporan baru</h2>
+   <form method="post" action="{{ url_for('laporan') }}" enctype="multipart/form-data" id="formLaporan">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="jenis-pick" role="radiogroup" aria-label="Jenis laporan">
+     <input type="radio" name="jenis" id="j-sampah" value="sampah" {{ 'checked' if pilih == 'sampah' }}>
+     <label for="j-sampah" style="--c:var(--sampah)"><b>♻ Sampah</b><span>Tumpukan sampah liar atau tidak terangkut</span></label>
+     <input type="radio" name="jenis" id="j-banjir" value="banjir" {{ 'checked' if pilih == 'banjir' }}>
+     <label for="j-banjir" style="--c:var(--banjir)"><b>≈ Banjir</b><span>Genangan atau banjir, dengan tinggi air</span></label>
+     <input type="radio" name="jenis" id="j-darurat" value="darurat" {{ 'checked' if pilih == 'darurat' }}>
+     <label for="j-darurat" style="--c:var(--darurat)"><b>! Darurat</b><span>Pohon tumbang, longsor, kebakaran, dll.</span></label>
+    </div>
+
+    <div class="jenis-note" id="noteDarurat" hidden>
+     Laporan di sini tidak menggantikan panggilan darurat. Jika ada korban atau bahaya langsung, hubungi <b>112</b> terlebih dahulu.
+    </div>
+
+    <div class="field">
+     <label for="judul">Judul laporan</label>
+     <input type="text" id="judul" name="judul" maxlength="150" value="{{ form.get('judul', '') }}" placeholder="Contoh: Tumpukan sampah menutup saluran air" required>
+    </div>
+
+    <div class="field">
+     <label for="deskripsi">Deskripsi</label>
+     <textarea id="deskripsi" name="deskripsi" maxlength="3000" placeholder="Jelaskan kondisi, sudah berapa lama, dan dampaknya." required>{{ form.get('deskripsi', '') }}</textarea>
+    </div>
+
+    <div class="field" id="boxTinggi" hidden>
+     <label for="tinggi_air">Tinggi air (cm)</label>
+     <input type="number" id="tinggi_air" name="tinggi_air" min="0" max="1000" step="any" value="{{ form.get('tinggi_air', '') }}" placeholder="Contoh: 40">
+     <span class="hint">Ukur dari permukaan jalan atau lantai sampai permukaan air.</span>
+    </div>
+
+    <div class="field">
+     <label for="foto"><span id="labelFoto">Foto</span></label>
+     <input type="file" id="foto" name="foto" accept="image/png,image/jpeg,image/webp">
+     <span class="hint" id="hintFoto">PNG, JPG, atau WEBP, maksimal 5 MB.</span>
+     <img id="fotoPreview" class="photo-preview" alt="Pratinjau foto yang dipilih">
+    </div>
+
+    <div class="field">
+     <label for="lokasi">Lokasi (nama jalan atau patokan)</label>
+     <input type="text" id="lokasi" name="lokasi" maxlength="255" value="{{ form.get('lokasi', '') }}" placeholder="Contoh: Jl. Melati dekat gerbang perumahan" required>
+    </div>
+
+    <div class="field" style="margin-bottom:8px">
+     <label>Titik di peta</label>
+    </div>
+    <div class="loc-actions">
+     <button class="btn secondary sm" type="button" id="btnLokasi">Gunakan lokasi saya</button>
+     <span class="small" id="statusLokasi">Atau klik peta untuk menaruh penanda.</span>
+    </div>
+    <div id="pickerMap" class="picker-map" aria-label="Peta untuk memilih lokasi"></div>
+    <div class="row-2">
+     <div class="field"><label for="latitude">Latitude</label>
+      <input type="number" id="latitude" name="latitude" step="any" min="-90" max="90" value="{{ form.get('latitude', '') }}" required></div>
+     <div class="field"><label for="longitude">Longitude</label>
+      <input type="number" id="longitude" name="longitude" step="any" min="-180" max="180" value="{{ form.get('longitude', '') }}" required></div>
+    </div>
+
+    <button class="btn full" type="submit" id="btnKirim">Kirim laporan</button>
+   </form>
+  </section>
+
+  <section class="panel">
+   <h2 class="panel-title">Laporan saya</h2>
+   <div class="report-list">
+    {% for r in riwayat_laporan %}
+    <article class="report-item">
+     <div class="report-thumb">
+      {% if r.foto %}<img src="{{ url_for('static', filename=r.foto) }}" alt="Foto laporan {{ r.judul }}" loading="lazy">
+      {% else %}{{ JENIS_LAPORAN[r.jenis].ikon if r.jenis in JENIS_LAPORAN else '•' }}{% endif %}
+     </div>
+     <div class="report-body">
+      <div class="report-top">
+       <span class="tag jenis {{ r.jenis }}">{{ JENIS_LAPORAN[r.jenis].label if r.jenis in JENIS_LAPORAN else r.jenis }}</span>
+       <span class="badge s-{{ r.status | status_kelas }}">{{ r.status }}</span>
+      </div>
+      <h3>{{ r.judul }}</h3>
+      <div class="report-meta">
+       {{ r.lokasi }}<br>
+       {{ r.dibuat | tgl }}{% if r.tinggi_air is not none %} · tinggi air {{ r.tinggi_air | round(1) }} cm{% endif %}
+      </div>
+      {% if r.tanggapan %}<div class="response"><b>Tanggapan admin:</b> {{ r.tanggapan }}</div>{% endif %}
+      <div style="margin-top:8px;display:flex;gap:12px;align-items:center">
+       <a class="table-link" style="font-size:11px" href="{{ url_for('peta', id=r.id) }}">Lihat di peta</a>
+       {% if r.status == 'Menunggu verifikasi' %}
+       <form class="inline-form" method="post" action="{{ url_for('laporan_hapus', laporan_id=r.id) }}" onsubmit="return confirm('Hapus laporan ini?')">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="link-btn danger" type="submit">Hapus</button>
+       </form>
+       {% endif %}
+      </div>
+     </div>
+    </article>
+    {% else %}
+    <div class="empty">Kamu belum mengirim laporan. Isi formulir di samping untuk membuat laporan pertama.</div>
+    {% endfor %}
+   </div>
+  </section>
+ </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function () {
+  const latEl = document.getElementById('latitude');
+  const lngEl = document.getElementById('longitude');
+  const statusEl = document.getElementById('statusLokasi');
+
+  /* ---- peta pemilih lokasi ---- */
+  const awal = [-6.2, 106.85];
+  const map = L.map('pickerMap').setView(awal, 11);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19, attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+  let marker = null;
+
+  function taruh(lat, lng, geser) {
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+    if (!marker) {
+      marker = L.marker([lat, lng], { draggable: true }).addTo(map);
+      marker.on('dragend', () => { const p = marker.getLatLng(); isi(p.lat, p.lng); });
+    } else {
+      marker.setLatLng([lat, lng]);
+    }
+    if (geser) map.setView([lat, lng], Math.max(map.getZoom(), 16));
+  }
+  function isi(lat, lng) {
+    latEl.value = lat.toFixed(6);
+    lngEl.value = lng.toFixed(6);
+    statusEl.textContent = 'Titik dipilih: ' + latEl.value + ', ' + lngEl.value;
+  }
+  map.on('click', e => { taruh(e.latlng.lat, e.latlng.lng, false); isi(e.latlng.lat, e.latlng.lng); });
+  [latEl, lngEl].forEach(el => el.addEventListener('change', () => {
+    const lat = parseFloat(latEl.value), lng = parseFloat(lngEl.value);
+    if (Number.isFinite(lat) && Number.isFinite(lng)) taruh(lat, lng, true);
+  }));
+  if (latEl.value && lngEl.value) taruh(parseFloat(latEl.value), parseFloat(lngEl.value), true);
+
+  document.getElementById('btnLokasi').addEventListener('click', () => {
+    if (!navigator.geolocation) { statusEl.textContent = 'Peramban tidak mendukung lokasi. Klik peta untuk memilih titik.'; return; }
+    statusEl.textContent = 'Mencari lokasimu…';
+    navigator.geolocation.getCurrentPosition(
+      pos => { taruh(pos.coords.latitude, pos.coords.longitude, true); isi(pos.coords.latitude, pos.coords.longitude); },
+      () => { statusEl.textContent = 'Lokasi tidak bisa diakses. Izinkan akses lokasi atau klik peta untuk memilih titik.'; },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  });
+
+  /* ---- bentuk formulir sesuai jenis ---- */
+  const radios = document.querySelectorAll('input[name=jenis]');
+  const boxTinggi = document.getElementById('boxTinggi');
+  const tinggi = document.getElementById('tinggi_air');
+  const foto = document.getElementById('foto');
+  function sesuaikan() {
+    const jenis = document.querySelector('input[name=jenis]:checked').value;
+    boxTinggi.hidden = jenis !== 'banjir';
+    tinggi.required = jenis === 'banjir';
+    document.getElementById('noteDarurat').hidden = jenis !== 'darurat';
+    const wajib = jenis !== 'darurat';
+    foto.required = wajib;
+    document.getElementById('labelFoto').textContent = wajib ? 'Foto (wajib)' : 'Foto (opsional)';
+  }
+  radios.forEach(r => r.addEventListener('change', sesuaikan));
+  sesuaikan();
+
+  /* ---- pratinjau & batas ukuran foto ---- */
+  const prev = document.getElementById('fotoPreview');
+  foto.addEventListener('change', () => {
+    const f = foto.files[0];
+    if (!f) { prev.style.display = 'none'; return; }
+    if (f.size > 5 * 1024 * 1024) {
+      alert('Ukuran foto maksimal 5 MB.');
+      foto.value = ''; prev.style.display = 'none'; return;
+    }
+    prev.src = URL.createObjectURL(f);
+    prev.style.display = 'block';
+  });
+
+  document.getElementById('formLaporan').addEventListener('submit', e => {
+    if (!latEl.value || !lngEl.value) {
+      e.preventDefault();
+      statusEl.textContent = 'Pilih titik lokasi dulu: klik peta atau gunakan lokasi saya.';
+      document.getElementById('pickerMap').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    document.getElementById('btnKirim').disabled = true;
+  });
+})();
+</script>
+{% endblock %}

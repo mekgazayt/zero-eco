@@ -1,0 +1,22 @@
+{% extends "admin/base.html" %}
+{% block title %}Dashboard Admin{% endblock %}
+{% block heading %}Selamat datang, {{ current_user.nama }}.{% endblock %}
+{% block subtitle %}Periksa laporan warga, ubah statusnya, dan pantau aktivitas sistem.{% endblock %}
+{% block actions %}
+<a class="btn" href="{{ url_for('admin_laporan') }}">Kelola Laporan</a>
+<a class="btn secondary" href="{{ url_for('peta') }}">Lihat Peta</a>
+{% endblock %}
+
+{% block body %}
+<section class="cards c5" aria-label="Ringkasan">
+ <div class="card metric"><h3>Pengguna</h3><strong>{{ jumlah_user }}</strong><p>akun terdaftar</p></div>
+ <div class="card metric"><h3>Laporan bulan ini</h3><strong>{{ laporan_bulan_ini }}</strong><p>dari {{ total_laporan }} laporan</p></div>
+ <div class="card metric warn"><h3>Menunggu verifikasi</h3><strong>{{ per_status['Menunggu verifikasi'] }}</strong><p>perlu diperiksa</p></div>
+ <div class="card metric ok"><h3>Selesai</h3><strong>{{ per_status['Selesai'] }}</strong><p>laporan tuntas</p></div>
+ <div class="card metric"><h3>Emisi tercatat</h3><strong>{{ total_emisi | emisi_fmt }}</strong><p>semua pengguna</p></div>
+</section>
+
+{% set form_action = url_for('admin_dashboard') %}
+{% set judul_blok = 'Kelola laporan' %}
+{% include 'admin/_tabel_laporan.html' %}
+{% endblock %}

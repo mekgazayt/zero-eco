@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f7f8f4">
+<title>{% block title %}ZERO ECO{% endblock %} | ZERO ECO</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+{% block head %}{% endblock %}
+</head>
+<body>
+{% set ep = request.endpoint or '' %}
+<header class="topbar">
+ <a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">♻</span>ZERO ECO</a>
+ <nav class="nav" aria-label="Navigasi utama">
+  {% if current_user and current_user.role == 'superadmin' %}
+   <a class="{{ 'active' if ep == 'superadmin_dashboard' }}" href="{{ url_for('superadmin_dashboard') }}">Dashboard</a>
+   <a class="{{ 'active' if ep.startswith('superadmin_akun') }}" href="{{ url_for('superadmin_akun') }}">Kelola Akun</a>
+   <a class="{{ 'active' if ep == 'superadmin_hak_akses' }}" href="{{ url_for('superadmin_hak_akses') }}">Hak Akses</a>
+   <a class="{{ 'active' if ep == 'superadmin_statistik' }}" href="{{ url_for('superadmin_statistik') }}">Statistik Sistem</a>
+   <a class="{{ 'active' if ep == 'superadmin_pengaturan' }}" href="{{ url_for('superadmin_pengaturan') }}">Pengaturan</a>
+   <a class="profile-link {{ 'active' if ep == 'profil' }}" href="{{ url_for('profil') }}">{{ current_user.nama }} <span class="role-pill">Super Admin</span></a>
+  {% elif current_user and current_user.role == 'admin' %}
+   <a class="{{ 'active' if ep == 'admin_dashboard' }}" href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+   <a class="{{ 'active' if ep.startswith('admin_laporan') }}" href="{{ url_for('admin_laporan') }}">Kelola Laporan</a>
+   <a class="{{ 'active' if ep.startswith('admin_pengguna') }}" href="{{ url_for('admin_pengguna') }}">Pengguna</a>
+   <a class="{{ 'active' if ep == 'peta' }}" href="{{ url_for('peta') }}">Peta</a>
+   <a class="profile-link {{ 'active' if ep == 'profil' }}" href="{{ url_for('profil') }}">{{ current_user.nama }} <span class="role-pill">Admin</span></a>
+  {% elif current_user %}
+   <a class="{{ 'active' if ep == 'halaman' }}" href="{{ url_for('halaman') }}">Dashboard</a>
+   <a class="{{ 'active' if ep == 'laporan' }}" href="{{ url_for('laporan') }}">Laporan Lingkungan</a>
+   <a class="{{ 'active' if ep == 'peta' }}" href="{{ url_for('peta') }}">Peta Laporan</a>
+   <a class="profile-link {{ 'active' if ep == 'profil' }}" href="{{ url_for('profil') }}">{{ current_user.nama }}</a>
+  {% else %}
+   <a href="{{ url_for('index') }}">Beranda</a>
+   <a href="{{ url_for('login') }}">Masuk</a>
+  {% endif %}
+  {% if current_user %}<a href="{{ url_for('logout') }}">Keluar ↗</a>{% endif %}
+ </nav>
+</header>
+{% block content %}{% endblock %}
+{% block scripts %}{% endblock %}
+</body>
+</html>

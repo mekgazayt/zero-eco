@@ -1,0 +1,16 @@
+# Database
+*.sql
+*.db
+*.sqlite
+*.sqlite3
+
+# Secret
+.secret_key
+.env
+.env.*
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/

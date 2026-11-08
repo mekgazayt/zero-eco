@@ -1,0 +1,1218 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f7f8f4">
+
+<title>ZERO ECO — Environmental Care Platform</title>
+
+<style>
+:root {
+    --green: #174b38;
+    --green-dark: #103729;
+    --green-light: #e8f0e9;
+    --lime: #c6dc83;
+    --ink: #202923;
+    --muted: #68736b;
+    --paper: #f7f8f4;
+    --white: #ffffff;
+    --line: #e5e9e2;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button {
+    font: inherit;
+}
+
+/* NAVIGATION */
+
+.navbar {
+    height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 7%;
+    background: rgba(255,255,255,.96);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--green);
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.logo-icon {
+    width: 37px;
+    height: 37px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--green);
+    color: white;
+    font-size: 20px;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+    font-size: 14px;
+    color: #4e5c52;
+}
+
+.nav-links a:hover {
+    color: var(--green);
+}
+
+.nav-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.login-link {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 23px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: .25s ease;
+    cursor: pointer;
+}
+
+.btn-green {
+    background: var(--green);
+    color: white;
+}
+
+.btn-green:hover {
+    background: var(--green-dark);
+    transform: translateY(-2px);
+}
+
+.btn-outline {
+    border: 1px solid rgba(255,255,255,.7);
+    color: white;
+}
+
+.btn-outline:hover {
+    background: white;
+    color: var(--green);
+}
+
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 25px;
+    color: var(--green);
+    cursor: pointer;
+}
+
+/* HERO */
+
+.hero {
+    min-height: 590px;
+    padding: 85px 7%;
+    display: grid;
+    grid-template-columns: 1.05fr .95fr;
+    align-items: center;
+    gap: 65px;
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 22px;
+}
+
+.eyebrow::before {
+    content: "";
+    width: 25px;
+    height: 2px;
+    background: #85a86b;
+}
+
+.hero h1 {
+    font-family: Georgia, serif;
+    font-size: clamp(42px, 5.2vw, 67px);
+    line-height: 1.12;
+    letter-spacing: -2px;
+    color: var(--green-dark);
+    font-weight: 500;
+    margin-bottom: 23px;
+}
+
+.hero h1 span {
+    color: #7c9c58;
+    font-style: italic;
+}
+
+.hero-description {
+    max-width: 490px;
+    font-size: 16px;
+    color: var(--muted);
+    line-height: 1.9;
+    margin-bottom: 30px;
+}
+
+.hero-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 13px;
+    margin-bottom: 35px;
+}
+
+.hero-note {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #66736a;
+    font-size: 12px;
+}
+
+.note-dot {
+    width: 9px;
+    height: 9px;
+    background: #82a96b;
+    border-radius: 50%;
+}
+
+.hero-image {
+    position: relative;
+    height: 425px;
+}
+
+.hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 3px;
+}
+
+.image-caption {
+    position: absolute;
+    bottom: 22px;
+    left: -28px;
+    background: white;
+    padding: 18px 23px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.1);
+    max-width: 245px;
+}
+
+.image-caption small {
+    color: #81917f;
+    font-size: 10px;
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+.image-caption p {
+    color: var(--green);
+    font-family: Georgia, serif;
+    font-size: 19px;
+    margin-top: 4px;
+}
+
+/* INTRO */
+
+.intro {
+    background: var(--green);
+    color: white;
+    padding: 58px 7%;
+    display: grid;
+    grid-template-columns: .8fr 1.2fr;
+    gap: 70px;
+    align-items: center;
+}
+
+.intro-label {
+    color: var(--lime);
+    font-size: 11px;
+    letter-spacing: 2px;
+    font-weight: 700;
+    margin-bottom: 13px;
+}
+
+.intro h2 {
+    font-family: Georgia, serif;
+    font-size: 34px;
+    font-weight: 400;
+    line-height: 1.3;
+}
+
+.intro p {
+    color: #d5e2d8;
+    font-size: 15px;
+    line-height: 1.9;
+}
+
+/* SECTION GENERAL */
+
+.section {
+    padding: 90px 7%;
+}
+
+.section-heading {
+    max-width: 620px;
+    margin-bottom: 45px;
+}
+
+.section-heading .eyebrow {
+    margin-bottom: 14px;
+}
+
+.section-heading h2 {
+    font-family: Georgia, serif;
+    color: var(--green-dark);
+    font-size: clamp(30px, 4vw, 43px);
+    font-weight: 500;
+    line-height: 1.25;
+    margin-bottom: 14px;
+}
+
+.section-heading p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.9;
+}
+
+/* FEATURES */
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.feature-card {
+    background: white;
+    border: 1px solid var(--line);
+    padding: 30px 27px;
+    transition: .25s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(25,60,40,.08);
+}
+
+.feature-icon {
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    background: var(--green-light);
+    color: var(--green);
+    border-radius: 50%;
+    font-size: 22px;
+    margin-bottom: 23px;
+}
+
+.feature-card h3 {
+    font-size: 19px;
+    color: var(--green-dark);
+    margin-bottom: 12px;
+}
+
+.feature-card p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.9;
+    min-height: 75px;
+}
+
+.feature-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: var(--green);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* ENVIRONMENT MAP */
+
+.map-section {
+    background: #edf1e9;
+}
+
+.map-layout {
+    display: grid;
+    grid-template-columns: .85fr 1.15fr;
+    align-items: center;
+    gap: 60px;
+}
+
+.map-info h2 {
+    font-family: Georgia, serif;
+    color: var(--green-dark);
+    font-size: 39px;
+    font-weight: 500;
+    line-height: 1.25;
+    margin-bottom: 20px;
+}
+
+.map-info p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.9;
+    margin-bottom: 25px;
+}
+
+.map-list {
+    list-style: none;
+}
+
+.map-list li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #dce4d9;
+    font-size: 13px;
+    color: #425348;
+}
+
+.map-marker {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.marker-red { background: #dc725e; }
+.marker-yellow { background: #d9a63f; }
+.marker-green { background: #5b9c6a; }
+.marker-blue { background: #4f8fd6; }
+
+.map-preview {
+    min-height: 345px;
+    background: #e0e9d9;
+    position: relative;
+    overflow: hidden;
+    border: 7px solid white;
+    box-shadow: 0 10px 30px rgba(30,60,40,.08);
+    background-image:
+        linear-gradient(30deg, transparent 45%, #fff 46%, #fff 48%, transparent 49%),
+        linear-gradient(120deg, transparent 45%, #fff 46%, #fff 48%, transparent 49%);
+    background-size: 95px 95px;
+}
+
+.map-road {
+    position: absolute;
+    width: 130%;
+    height: 18px;
+    background: #fff;
+    top: 48%;
+    left: -10%;
+    transform: rotate(-23deg);
+}
+
+.map-road.two {
+    top: 20%;
+    transform: rotate(48deg);
+}
+
+.map-water {
+    position: absolute;
+    width: 75%;
+    height: 75px;
+    background: #a9d5d5;
+    bottom: -12px;
+    right: -20px;
+    transform: rotate(-20deg);
+    border-radius: 50%;
+}
+
+.pin {
+    position: absolute;
+    z-index: 2;
+    width: 35px;
+    height: 35px;
+    display: grid;
+    place-items: center;
+    color: white;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    box-shadow: 0 3px 10px rgba(0,0,0,.2);
+}
+
+.pin span {
+    transform: rotate(45deg);
+    font-size: 14px;
+}
+
+.pin.one {
+    top: 27%;
+    left: 28%;
+    background: #dc725e;
+}
+
+.pin.two {
+    top: 60%;
+    left: 63%;
+    background: #d9a63f;
+}
+
+.pin.three {
+    top: 18%;
+    left: 72%;
+    background: #4f8fd6;
+}
+
+.map-label {
+    position: absolute;
+    z-index: 3;
+    top: 12px;
+    left: 12px;
+    background: white;
+    padding: 9px 13px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--green);
+}
+
+.map-disclaimer {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    z-index: 3;
+    background: rgba(255,255,255,.9);
+    padding: 5px 8px;
+    font-size: 10px;
+    color: #68736b;
+}
+
+/* HOW IT WORKS */
+
+.steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 35px;
+}
+
+.step {
+    border-top: 2px solid #a6bb91;
+    padding-top: 20px;
+}
+
+.step-number {
+    font-family: Georgia, serif;
+    color: #8da879;
+    font-size: 35px;
+    margin-bottom: 15px;
+}
+
+.step h3 {
+    color: var(--green-dark);
+    font-size: 17px;
+    margin-bottom: 10px;
+}
+
+.step p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.9;
+}
+
+/* CTA */
+
+.cta {
+    margin: 0 7% 85px;
+    padding: 65px 30px;
+    text-align: center;
+    background: var(--green-dark);
+    color: white;
+}
+
+.cta h2 {
+    font-family: Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(30px, 4vw, 42px);
+    margin-bottom: 15px;
+}
+
+.cta p {
+    max-width: 560px;
+    margin: 0 auto 27px;
+    color: #d4e1d7;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.cta .btn {
+    background: var(--lime);
+    color: var(--green-dark);
+}
+
+.cta .btn:hover {
+    background: white;
+}
+
+/* FOOTER */
+
+.footer {
+    padding: 38px 7%;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.footer p {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.footer-links {
+    display: flex;
+    gap: 22px;
+    font-size: 12px;
+    color: #536359;
+}
+
+/* MOBILE */
+
+@media(max-width: 900px) {
+    .navbar {
+        padding: 0 5%;
+    }
+
+    .nav-links {
+        gap: 16px;
+    }
+
+    .hero {
+        padding: 65px 5%;
+        gap: 35px;
+    }
+
+    .hero-image {
+        height: 350px;
+    }
+
+    .intro,
+    .section {
+        padding-left: 5%;
+        padding-right: 5%;
+    }
+
+    .map-layout {
+        gap: 30px;
+    }
+}
+
+@media(max-width: 680px) {
+    .navbar {
+        height: 68px;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 68px;
+        left: 0;
+        width: 100%;
+        background: white;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 20px 7%;
+        gap: 0;
+        box-shadow: 0 10px 20px rgba(0,0,0,.06);
+    }
+
+    .nav-links.active {
+        display: flex;
+    }
+
+    .nav-links a {
+        display: block;
+        padding: 12px 0;
+    }
+
+    .nav-actions {
+        gap: 12px;
+    }
+
+    .nav-actions .btn {
+        padding: 9px 13px;
+        font-size: 12px;
+    }
+
+    .login-link {
+        display: none;
+    }
+
+    .logo {
+        font-size: 19px;
+    }
+
+    .hero {
+        grid-template-columns: 1fr;
+        padding: 65px 6% 45px;
+        gap: 35px;
+    }
+
+    .hero h1 {
+        font-size: 45px;
+    }
+
+    .hero-image {
+        height: 310px;
+        margin-left: 15px;
+    }
+
+    .image-caption {
+        left: -15px;
+    }
+
+    .intro {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 45px 6%;
+    }
+
+    .intro h2 {
+        font-size: 29px;
+    }
+
+    .section {
+        padding: 65px 6%;
+    }
+
+    .features {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .feature-card p {
+        min-height: 0;
+    }
+
+    .map-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .map-info h2 {
+        font-size: 33px;
+    }
+
+    .map-preview {
+        min-height: 280px;
+    }
+
+    .steps {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+
+    .cta {
+        margin: 0 5% 55px;
+        padding: 45px 20px;
+    }
+
+    .footer {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+@media(prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    * {
+        transition: none !important;
+    }
+}
+</style>
+</head>
+
+<body>
+{% set dash_url = beranda_url() if current_user else url_for('login') %}
+
+<!-- NAVBAR -->
+<header class="navbar">
+
+    <a href="#" class="logo">
+        <span class="logo-icon">♻</span>
+        ZERO ECO
+    </a>
+
+    <button class="menu-toggle" id="menuToggle"
+        aria-label="Buka menu" aria-expanded="false">
+        ☰
+    </button>
+
+    <ul class="nav-links" id="navLinks">
+        <li><a href="#beranda">Beranda</a></li>
+        <li><a href="#tentang">Tentang</a></li>
+        <li><a href="#layanan">Layanan</a></li>
+        <li><a href="#peta">Peta Lingkungan</a></li>
+        <li><a href="#cara-kerja">Cara Kerja</a></li>
+    </ul>
+
+    <div class="nav-actions">
+        {% if current_user %}
+        <a href="{{ dash_url }}" class="btn btn-green">Buka Dashboard</a>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="login-link">Masuk</a>
+        <a href="{{ url_for('signup') }}" class="btn btn-green">Mulai Sekarang</a>
+        {% endif %}
+    </div>
+
+</header>
+
+
+<!-- HERO -->
+<main>
+
+<section class="hero" id="beranda">
+
+    <div class="hero-text">
+
+        <div class="eyebrow">
+            Environmental Care Platform
+        </div>
+
+        <h1>
+            Lingkungan yang baik dimulai dari
+            <span>kepedulian.</span>
+        </h1>
+
+        <p class="hero-description">
+            ZERO ECO merupakan platform digital yang menghubungkan
+            masyarakat dengan pengelolaan lingkungan. Mulai dari
+            pengelolaan sampah, pelaporan keadaan darurat, hingga
+            pemantauan kondisi banjir dalam satu sistem.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="{{ dash_url }}" class="btn btn-green">
+                {{ 'Buka Dashboard' if current_user else 'Mulai Sekarang' }} →
+            </a>
+
+            <a href="#tentang" class="btn"
+                style="border:1px solid #cbd5ca;color:#345441">
+                Kenali ZERO ECO
+            </a>
+        </div>
+
+        <div class="hero-note">
+            <span class="note-dot"></span>
+            Satu platform untuk lingkungan yang lebih terkelola.
+        </div>
+
+    </div>
+
+    <div class="hero-image">
+        <img
+            src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1100&q=85"
+            alt="Hutan hijau sebagai gambaran lingkungan lestari">
+
+        <div class="image-caption">
+            <small>OUR PURPOSE</small>
+            <p>Small actions. Better environment.</p>
+        </div>
+    </div>
+
+</section>
+
+
+<!-- ABOUT -->
+<section class="intro" id="tentang">
+
+    <div>
+        <div class="intro-label">TENTANG ZERO ECO</div>
+
+        <h2>
+            Lebih dari sekadar informasi lingkungan.
+        </h2>
+    </div>
+
+    <p>
+        Permasalahan lingkungan membutuhkan perhatian dan
+        keterlibatan bersama. ZERO ECO hadir untuk membantu
+        masyarakat menyampaikan laporan, memperoleh informasi,
+        serta memantau tindak lanjut permasalahan lingkungan
+        melalui teknologi digital yang terintegrasi.
+    </p>
+
+</section>
+
+
+<!-- SERVICES -->
+<section class="section" id="layanan">
+
+    <div class="section-heading">
+
+        <div class="eyebrow">LAYANAN KAMI</div>
+
+        <h2>
+            Mengenali masalah, mengambil tindakan.
+        </h2>
+
+        <p>
+            Empat layanan utama yang dirancang untuk membantu
+            masyarakat dan pengelola lingkungan bekerja
+            lebih terorganisasi.
+        </p>
+
+    </div>
+
+    <div class="features">
+
+        <article class="feature-card">
+
+            <div class="feature-icon">♻</div>
+
+            <h3>Waste Management</h3>
+
+            <p>
+                Membantu masyarakat melaporkan penumpukan sampah,
+                memantau pengangkutan, serta mendukung pengelolaan
+                sampah yang lebih teratur.
+            </p>
+
+            <a href="{{ url_for('laporan', jenis='sampah') }}" class="feature-link">
+                Jelajahi layanan →
+            </a>
+
+        </article>
+
+
+        <article class="feature-card">
+
+            <div class="feature-icon">⚠</div>
+
+            <h3>Emergency Reporting</h3>
+
+            <p>
+                Menyediakan sarana pelaporan kejadian darurat
+                seperti pohon tumbang, kebakaran, longsor,
+                dan kerusakan fasilitas umum.
+            </p>
+
+            <a href="{{ url_for('laporan', jenis='darurat') }}" class="feature-link">
+                Jelajahi layanan →
+            </a>
+
+        </article>
+
+
+        <article class="feature-card">
+
+            <div class="feature-icon">⌁</div>
+
+            <h3>Flood Monitoring</h3>
+
+            <p>
+                Membantu masyarakat memperoleh informasi
+                kondisi banjir melalui laporan warga,
+                dokumentasi, dan verifikasi petugas.
+            </p>
+
+            <a href="{{ url_for('laporan', jenis='banjir') }}" class="feature-link">
+                Jelajahi layanan →
+            </a>
+
+        </article>
+
+
+        <article class="feature-card">
+
+            <div class="feature-icon" style="font-size:15px;font-weight:700">CO₂</div>
+
+            <h3>Carbon Footprint</h3>
+
+            <p>
+                Menghitung perkiraan jejak karbon dari aktivitas
+                harian seperti transportasi, listrik, makanan,
+                dan sampah, lengkap dengan grafik dan saran.
+            </p>
+
+            <a href="{{ url_for('halaman') }}" class="feature-link">
+                Jelajahi layanan →
+            </a>
+
+        </article>
+
+    </div>
+
+</section>
+
+
+<!-- ENVIRONMENT MAP -->
+<section class="section map-section" id="peta">
+
+    <div class="map-layout">
+
+        <div class="map-info">
+
+            <div class="eyebrow">ENVIRONMENTAL MAP</div>
+
+            <h2>
+                Melihat kondisi lingkungan dalam satu peta.
+            </h2>
+
+            <p>
+                Laporan warga ditampilkan berdasarkan lokasi agar
+                masyarakat dapat mengetahui titik permasalahan
+                dan perkembangan penanganannya.
+            </p>
+
+            <ul class="map-list">
+
+                <li>
+                    <span class="map-marker marker-red"></span>
+                    Kejadian darurat yang butuh petugas
+                </li>
+
+                <li>
+                    <span class="map-marker marker-yellow"></span>
+                    Lokasi penumpukan sampah
+                </li>
+
+                <li>
+                    <span class="map-marker marker-blue"></span>
+                    Banjir dan genangan air, lengkap dengan tinggi air
+                </li>
+
+            </ul>
+
+            <a href="{{ url_for('peta') }}" class="btn btn-green" style="margin-top:26px">
+                Buka peta laporan →
+            </a>
+
+        </div>
+
+
+        <!-- ILUSTRASI PETA, BUKAN PETA LIVE -->
+        <div class="map-preview">
+
+            <div class="map-label">
+                ZERO ECO · MAP PREVIEW
+            </div>
+
+            <div class="map-road"></div>
+            <div class="map-road two"></div>
+            <div class="map-water"></div>
+
+            <div class="pin one"><span>!</span></div>
+            <div class="pin two"><span>♻</span></div>
+            <div class="pin three"><span>≈</span></div>
+
+            <div class="map-disclaimer">
+                Ilustrasi tampilan peta. Peta asli menampilkan
+                laporan warga setelah kamu masuk.
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- HOW IT WORKS -->
+<section class="section" id="cara-kerja">
+
+    <div class="section-heading">
+
+        <div class="eyebrow">CARA KERJA</div>
+
+        <h2>
+            Sederhana untuk digunakan, bermanfaat untuk bersama.
+        </h2>
+
+        <p>
+            ZERO ECO dirancang agar masyarakat dapat
+            berpartisipasi tanpa proses yang rumit.
+        </p>
+
+    </div>
+
+
+    <div class="steps">
+
+        <article class="step">
+
+            <div class="step-number">01</div>
+
+            <h3>Laporkan kondisi</h3>
+
+            <p>
+                Pengguna menyampaikan permasalahan lingkungan
+                melalui aplikasi dengan melampirkan lokasi,
+                foto, dan keterangan.
+            </p>
+
+        </article>
+
+
+        <article class="step">
+
+            <div class="step-number">02</div>
+
+            <h3>Verifikasi informasi</h3>
+
+            <p>
+                Laporan diterima oleh pengelola untuk diperiksa
+                dan diteruskan kepada petugas yang bertanggung jawab.
+            </p>
+
+        </article>
+
+
+        <article class="step">
+
+            <div class="step-number">03</div>
+
+            <h3>Pantau tindak lanjut</h3>
+
+            <p>
+                Masyarakat dapat melihat perkembangan
+                penanganan laporan dan informasi lingkungan
+                melalui platform ZERO ECO.
+            </p>
+
+        </article>
+
+    </div>
+
+</section>
+
+
+<!-- CALL TO ACTION -->
+<section class="cta">
+
+    <h2>Perubahan dimulai dari kepedulian.</h2>
+
+    <p>
+        Mari ikut berkontribusi dalam menjaga lingkungan.
+        Gunakan ZERO ECO untuk menyampaikan informasi
+        dan berpartisipasi dalam pengelolaan lingkungan.
+    </p>
+
+    <a href="{{ dash_url }}" class="btn">
+        {{ 'Buka Dashboard' if current_user else 'Mulai Sekarang' }} →
+    </a>
+
+</section>
+
+</main>
+
+
+<!-- FOOTER -->
+<footer class="footer">
+
+    <div>
+        <a href="#" class="logo">
+            <span class="logo-icon">♻</span>
+            ZERO ECO
+        </a>
+
+        <p style="margin-top:10px">
+            Environmental Care Platform
+        </p>
+    </div>
+
+    <div class="footer-links">
+        <a href="#tentang">Tentang</a>
+        <a href="#layanan">Layanan</a>
+        <a href="#peta">Peta Lingkungan</a>
+        <a href="{{ url_for('login') }}">{{ 'Dashboard' if current_user else 'Masuk' }}</a>
+    </div>
+
+    <p>
+        © <span id="year"></span> ZERO ECO.
+        All rights reserved.
+    </p>
+
+</footer>
+
+
+<script>
+const menuToggle = document.getElementById("menuToggle");
+const navLinks = document.getElementById("navLinks");
+
+// Mobile navigation
+menuToggle.addEventListener("click", () => {
+    const isOpen = navLinks.classList.toggle("active");
+
+    menuToggle.setAttribute("aria-expanded", isOpen);
+    menuToggle.textContent = isOpen ? "✕" : "☰";
+});
+
+// Tutup menu setelah memilih navigasi
+document.querySelectorAll(".nav-links a").forEach(link => {
+    link.addEventListener("click", () => {
+        navLinks.classList.remove("active");
+        menuToggle.setAttribute("aria-expanded", "false");
+        menuToggle.textContent = "☰";
+    });
+});
+
+// Tahun otomatis
+document.getElementById("year").textContent =
+    new Date().getFullYear();
+</script>
+
+</body>
+</html>

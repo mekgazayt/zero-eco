@@ -1,0 +1,145 @@
+{% extends "layout.html" %}
+{% block title %}Peta Laporan{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+{% endblock %}
+
+{% block content %}
+<div class="map-page">
+ <aside class="map-side">
+  <div class="map-side-head">
+   <h1 class="section-title" style="margin-bottom:4px">Peta kondisi lingkungan</h1>
+   <p class="small" id="ringkas">Memuat laporan…</p>
+   <div class="chips" role="group" aria-label="Filter jenis laporan">
+    {% for kode, j in JENIS_LAPORAN.items() %}
+    <label class="chip" style="--c:{{ j.warna }}"><input type="checkbox" class="f-jenis" value="{{ kode }}" checked><i></i>{{ j.label }} <span id="n-{{ kode }}">0</span></label>
+    {% endfor %}
+   </div>
+   <div class="map-filter">
+    <select id="fStatus" aria-label="Filter status">
+     <option value="">Semua status</option>
+     {% for s in STATUS_LAPORAN %}
+      {% if s != 'Ditolak' or (current_user and current_user.role == 'admin') %}<option value="{{ s }}">{{ s }}</option>{% endif %}
+     {% endfor %}
+    </select>
+   </div>
+  </div>
+  <div class="map-list" id="daftar"></div>
+ </aside>
+ <div id="map" role="application" aria-label="Peta laporan lingkungan"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function () {
+  const JENIS = {{ JENIS_LAPORAN | tojson }};
+  const fokusId = new URLSearchParams(location.search).get('id');
+
+  const map = L.map('map').setView([-6.2, 106.85], 11);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19, attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+  const lapisan = L.layerGroup().addTo(map);
+
+  let semua = [];
+  const markerById = {};
+
+  /* Semua teks dari pengguna dimasukkan lewat textContent agar aman dari XSS */
+  function el(tag, kelas, teks) {
+    const e = document.createElement(tag);
+    if (kelas) e.className = kelas;
+    if (teks !== undefined && teks !== null) e.textContent = teks;
+    return e;
+  }
+  function ikon(jenis) {
+    const j = JENIS[jenis] || { warna: '#68736b', ikon: '•' };
+    return L.divIcon({
+      className: 'pin-icon',
+      html: '<span style="background:' + j.warna + '">' + j.ikon + '</span>',
+      iconSize: [30, 30], iconAnchor: [15, 15], popupAnchor: [0, -14]
+    });
+  }
+  function kelasStatus(s) {
+    return ({ 'Menunggu verifikasi': 'menunggu', 'Diverifikasi': 'verifikasi', 'Ditangani': 'ditangani',
+              'Selesai': 'selesai', 'Ditolak': 'ditolak' })[s] || 'menunggu';
+  }
+  function popup(r) {
+    const j = JENIS[r.jenis] || { label: r.jenis };
+    const box = el('div', 'pop');
+    const top = el('div', 'report-top');
+    top.append(el('span', 'tag jenis ' + r.jenis, j.label), el('span', 'badge s-' + kelasStatus(r.status), r.status));
+    box.append(top, el('h4', '', r.judul));
+    if (r.foto) { const img = el('img'); img.src = r.foto; img.alt = 'Foto laporan'; img.loading = 'lazy'; box.append(img); }
+    box.append(el('p', '', r.deskripsi));
+    if (r.tinggi_air !== null && r.tinggi_air !== undefined) box.append(el('p', '', 'Tinggi air: ' + r.tinggi_air + ' cm'));
+    box.append(el('p', 'meta', r.lokasi));
+    box.append(el('p', 'meta', r.dibuat + (r.pelapor ? ' · ' + r.pelapor : '')));
+    if (r.tanggapan) { const t = el('div', 'response'); t.append(el('b', '', 'Tanggapan admin: '), document.createTextNode(r.tanggapan)); box.append(t); }
+    return box;
+  }
+
+  function terfilter() {
+    const aktif = new Set([...document.querySelectorAll('.f-jenis:checked')].map(c => c.value));
+    const status = document.getElementById('fStatus').value;
+    return semua.filter(r => aktif.has(r.jenis) && (!status || r.status === status));
+  }
+
+  function gambar(sesuaikanPandangan) {
+    lapisan.clearLayers();
+    const daftar = document.getElementById('daftar');
+    daftar.replaceChildren();
+    const data = terfilter();
+    const batas = [];
+    data.forEach(r => {
+      const m = L.marker([r.latitude, r.longitude], { icon: ikon(r.jenis), title: r.judul }).addTo(lapisan);
+      m.bindPopup(() => popup(r));
+      markerById[r.id] = m;
+      batas.push([r.latitude, r.longitude]);
+
+      const item = el('button', 'map-item');
+      item.type = 'button';
+      const top = el('div', 'report-top');
+      top.append(el('span', 'tag jenis ' + r.jenis, (JENIS[r.jenis] || {}).label || r.jenis),
+                 el('span', 'badge s-' + kelasStatus(r.status), r.status));
+      item.append(top, el('b', '', r.judul), el('small', '', r.lokasi), el('small', '', r.dibuat));
+      item.addEventListener('click', () => { map.setView([r.latitude, r.longitude], Math.max(map.getZoom(), 16)); m.openPopup(); });
+      daftar.append(item);
+    });
+    if (!data.length) {
+      daftar.append(el('div', 'map-empty', semua.length
+        ? 'Tidak ada laporan yang cocok dengan filter.'
+        : 'Belum ada laporan di peta. Jadilah yang pertama melaporkan.'));
+    }
+    if (sesuaikanPandangan && batas.length) map.fitBounds(batas, { padding: [40, 40], maxZoom: 16 });
+  }
+
+  function hitung() {
+    const n = { sampah: 0, banjir: 0, darurat: 0 };
+    semua.forEach(r => { if (r.jenis in n) n[r.jenis]++; });
+    Object.keys(n).forEach(k => { document.getElementById('n-' + k).textContent = n[k]; });
+    document.getElementById('ringkas').textContent = semua.length + ' laporan tercatat di peta.';
+  }
+
+  document.querySelectorAll('.f-jenis').forEach(c => c.addEventListener('change', () => gambar(false)));
+  document.getElementById('fStatus').addEventListener('change', () => gambar(true));
+
+  fetch({{ url_for('api_laporan') | tojson }}, { credentials: 'same-origin' })
+    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(data => {
+      semua = data;
+      hitung();
+      gambar(true);
+      if (fokusId && markerById[fokusId]) {
+        const m = markerById[fokusId];
+        map.setView(m.getLatLng(), 16);
+        m.openPopup();
+      }
+    })
+    .catch(() => {
+      document.getElementById('ringkas').textContent = 'Laporan gagal dimuat. Muat ulang halaman.';
+    });
+})();
+</script>
+{% endblock %}
