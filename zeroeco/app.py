@@ -56,7 +56,7 @@ ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 
 DB_CONFIG = {
     "host": os.environ.get("DB_HOST", "localhost"),
-    "port": int(os.environ.get("DB_PORT", "4000")),
+    "port": int(os.environ.get("DB_PORT", "3306")),
     "user": os.environ.get("DB_USER", "root"),
     "password": os.environ.get("DB_PASSWORD", ""),
     "database": os.environ.get("DB_NAME", "zeroeco"),
@@ -66,8 +66,16 @@ DB_CONFIG = {
 DB_SSL_CA = os.environ.get("DB_SSL_CA")
 
 if DB_SSL_CA:
+    ca_path = Path(DB_SSL_CA)
+
+    if not ca_path.is_absolute():
+        ca_path = BASE_DIR / ca_path
+
+    if not ca_path.is_file():
+        raise RuntimeError(f"File CA tidak ditemukan: {ca_path}")
+
     DB_CONFIG.update({
-        "ssl_ca": DB_SSL_CA,
+        "ssl_ca": str(ca_path),
         "ssl_verify_cert": True,
         "ssl_verify_identity": True,
     })
@@ -646,6 +654,7 @@ def signup():
     except Error as exc:
         if getattr(exc, "errno", None) == 1062:
             return gagal("Username atau email sudah dipakai.")
+        app.logger.exception("ERROR REGISTRASI ZERO ECO")
         return gagal("Pendaftaran gagal. Periksa koneksi database lalu coba lagi.")
     return render_template("signup.html", error=None, success="Akun berhasil dibuat! Silakan masuk.", form={})
 
