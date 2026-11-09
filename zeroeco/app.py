@@ -650,10 +650,10 @@ def signup():
 
         user_id = secrets.randbelow(2_000_000_000) + 1
 
-        db_exec("""INSERT INTO users (id,nama,email,username,password,bergabung,role,aktif)
-                   VALUES (%s,%s,%s,%s,%s,'user')""",
-                (form["nama"], form["email"], form["username"],
-                 generate_password_hash(password), datetime.now().date()))
+        db_exec("""INSERT INTO users (id, nama, email, username, password, bergabung, role, aktif)
+                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
+                (user_id,form["nama"], form["email"], form["username"],
+                 generate_password_hash(password), datetime.now().date(),"user",1))
     except Error as exc:
         if getattr(exc, "errno", None) == 1062:
             return gagal("Username atau email sudah dipakai.")
