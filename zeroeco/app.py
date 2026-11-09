@@ -620,6 +620,7 @@ def signup():
     if request.method == "GET":
         if get_current_user():
             return redirect(beranda_untuk(get_current_user()))
+
         return render_template(
             "signup.html",
             error=None,
@@ -647,7 +648,7 @@ def signup():
         )
 
     # Validasi
-    if not nama or not email or not username or not password:
+    if not all([nama, email, username, password]):
         return gagal("Semua kolom wajib diisi.")
 
     if len(nama) > 100:
@@ -668,13 +669,13 @@ def signup():
         return gagal("Password minimal 8 karakter.")
 
     try:
+
         # cek username/email
         ada = db_one(
             """
             SELECT id
             FROM users
-            WHERE username = %s
-               OR email = %s
+            WHERE username=%s OR email=%s
             LIMIT 1
             """,
             (username, email)
@@ -709,7 +710,8 @@ def signup():
         )
         VALUES
         (
-            %s,%s,%s,%s,%s,%s,%s,%s
+            %s, %s, %s, %s,
+            %s, %s, %s, %s
         )
         """
 
@@ -724,11 +726,29 @@ def signup():
             1
         )
 
+        # DEBUG
+        print("=== SIGNUP DEBUG ===")
+        print("SQL =", sql)
+        print("PARAMS =", params)
+        print("PARAM COUNT =", len(params))
+        print("====================")
+
         db_exec(sql, params)
 
     except Error as exc:
+
+        print("=== MYSQL ERROR ===")
+        print(repr(exc))
+        print("===================")
+
+        if getattr(exc, "errno", None) == 1062:
+            return gagal("Username atau email sudah digunakan.")
+
         app.logger.exception("ERROR REGISTRASI ZERO ECO")
-        return gagal(f"Pendaftaran gagal: {exc}")
+
+        return gagal(
+            f"Pendaftaran gagal: {str(exc)}"
+        )
 
     return render_template(
         "signup.html",
