@@ -647,7 +647,7 @@ def signup():
         ada = db_one("SELECT id FROM users WHERE username=%s OR email=%s", (form["username"], form["email"]))
         if ada:
             return gagal("Username atau email sudah dipakai.")
-        db_exec("""INSERT INTO users (nama,email,username,password,bergabung,role)
+        db_exec("""INSERT INTO users(nama,email,username,password,bergabung,role,aktif)
                    VALUES (%s,%s,%s,%s,%s,'user')""",
                 (form["nama"], form["email"], form["username"],
                  generate_password_hash(password), datetime.now().date()))
