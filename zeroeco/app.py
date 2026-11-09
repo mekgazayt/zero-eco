@@ -620,46 +620,122 @@ def signup():
     if request.method == "GET":
         if get_current_user():
             return redirect(beranda_untuk(get_current_user()))
-        return render_template("signup.html", error=None, success=None, form={})
+        return render_template(
+            "signup.html",
+            error=None,
+            success=None,
+            form={}
+        )
 
-    form = {
-        "nama": request.form.get("nama", "").strip(),
-        "email": request.form.get("email", "").strip(),
-        "username": request.form.get("username", "").strip(),
-    }
+    nama = request.form.get("nama", "").strip()
+    email = request.form.get("email", "").strip().lower()
+    username = request.form.get("username", "").strip()
     password = request.form.get("password", "")
 
-    def gagal(pesan):
-        return render_template("signup.html", error=pesan, success=None, form=form)
+    form = {
+        "nama": nama,
+        "email": email,
+        "username": username
+    }
 
-    if not all([form["nama"], form["email"], form["username"], password]):
+    def gagal(pesan):
+        return render_template(
+            "signup.html",
+            error=pesan,
+            success=None,
+            form=form
+        )
+
+    # Validasi
+    if not nama or not email or not username or not password:
         return gagal("Semua kolom wajib diisi.")
-    if len(form["nama"]) > 100 or len(form["email"]) > 150:
-        return gagal("Nama maksimal 100 karakter dan email maksimal 150 karakter.")
-    if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", form["email"]):
+
+    if len(nama) > 100:
+        return gagal("Nama maksimal 100 karakter.")
+
+    if len(email) > 150:
+        return gagal("Email maksimal 150 karakter.")
+
+    if not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
         return gagal("Format email tidak valid.")
-    if not re.fullmatch(r"[A-Za-z0-9_.-]{3,30}", form["username"]):
-        return gagal("Username 3–30 karakter: huruf, angka, titik, garis bawah, atau strip.")
+
+    if not re.fullmatch(r"[A-Za-z0-9_.-]{3,30}", username):
+        return gagal(
+            "Username hanya boleh 3-30 karakter berupa huruf, angka, titik, garis bawah, atau strip."
+        )
+
     if len(password) < 8:
         return gagal("Password minimal 8 karakter.")
 
     try:
-        ada = db_one("SELECT id FROM users WHERE username=%s OR email=%s", (form["username"], form["email"]))
+        # cek username/email
+        ada = db_one(
+            """
+            SELECT id
+            FROM users
+            WHERE username = %s
+               OR email = %s
+            LIMIT 1
+            """,
+            (username, email)
+        )
+
         if ada:
-            return gagal("Username atau email sudah dipakai.")
+            return gagal("Username atau email sudah digunakan.")
 
-        user_id = secrets.randbelow(2_000_000_000) + 1
+        # generate id unik
+        while True:
+            user_id = secrets.randbelow(2147483647)
 
-        db_exec("""INSERT INTO users (id, nama, email, username, password, bergabung, role, aktif)
-                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
-                (user_id,form["nama"], form["email"], form["username"],
-                 generate_password_hash(password), datetime.now().date(),"user",1))
+            cek_id = db_one(
+                "SELECT id FROM users WHERE id=%s",
+                (user_id,)
+            )
+
+            if not cek_id:
+                break
+
+        sql = """
+        INSERT INTO users
+        (
+            id,
+            nama,
+            email,
+            username,
+            password,
+            bergabung,
+            role,
+            aktif
+        )
+        VALUES
+        (
+            %s,%s,%s,%s,%s,%s,%s,%s
+        )
+        """
+
+        params = (
+            user_id,
+            nama,
+            email,
+            username,
+            generate_password_hash(password),
+            datetime.now().date(),
+            "user",
+            1
+        )
+
+        db_exec(sql, params)
+
     except Error as exc:
-        if getattr(exc, "errno", None) == 1062:
-            return gagal("Username atau email sudah dipakai.")
         app.logger.exception("ERROR REGISTRASI ZERO ECO")
-        return gagal("Pendaftaran gagal. Periksa koneksi database lalu coba lagi.")
-    return render_template("signup.html", error=None, success="Akun berhasil dibuat! Silakan masuk.", form={})
+        return gagal(f"Pendaftaran gagal: {exc}")
+
+    return render_template(
+        "signup.html",
+        error=None,
+        success="Akun berhasil dibuat! Silakan login.",
+        form={}
+    )
 
 
 @app.route("/logout")
